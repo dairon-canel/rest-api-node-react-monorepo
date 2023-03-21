@@ -1,1 +1,1 @@
-export { useGateways as default } from './gateway';
+export { useGateways } from './gateway';

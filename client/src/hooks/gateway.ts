@@ -7,7 +7,10 @@ export const useGateways = () => {
   const [error, setError] = useState<boolean>(false);
 
   useEffect(() => {
-    fetch('/gateways', { headers: { Accept: 'application/json' } })
+    fetch('/gateways', {
+      method: 'GET',
+      headers: { Accept: 'application/json' },
+    })
       .then(res => res.json())
       .then(data => {
         setGateways(data);

@@ -12,11 +12,9 @@ function App() {
   }, []);
 
   return (
-    <div className="App">
+    <div>
       <h1>Gateway Master</h1>
-      <div className="card">
-        <GatewayList />
-      </div>
+      <GatewayList />
       <p>{apiMessage}</p>
     </div>
   );

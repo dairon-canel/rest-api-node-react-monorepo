@@ -1,36 +1,20 @@
-import { useGateways } from '../hooks/gateway';
+import { useGateways } from '../hooks';
+//import { addPeripheral } from '../services';
 
 function GatewayList() {
   const { gateways, loading, error } = useGateways();
 
-  /* function addPeripheral(gatewaySerialNumber) {
-    fetch(`http://yourapi.com/gateways/${gatewaySerialNumber}/peripherals`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        uid: 1234,
-        vendor: 'Example Vendor',
-        dateCreated: '2023-03-21T12:34:56.789Z',
-        status: 'online',
-      }),
-    })
-      .then(response => response.json())
-      .then(data => console.log(data))
-      .catch(error => console.log(error));
-  } */
-
   return (
-    <div>
+    <div className="overflow-x-auto">
       <h1>List of Gateways</h1>
-      <table>
+      <table className="table w-full">
         <thead>
           <tr>
             <th>Serial Number</th>
             <th>Name</th>
             <th>IP Address</th>
             <th>Peripherals</th>
+            <th>Actions</th>
           </tr>
         </thead>
         <tbody>
@@ -55,12 +39,26 @@ function GatewayList() {
                         {`UID: ${peripheral.uid} Vendor: ${peripheral.vendor}{' '}
                         Created:
                         ${peripheral.dateCreated} Status: ${peripheral.status}`}
+                        <button /* onClick={() => addPeripheral(gateway.serialNumber)} */
+                        >
+                          Remove Peripheral
+                        </button>
+                        <button /* onClick={() => addPeripheral(gateway.serialNumber)} */
+                        >
+                          Update Peripheral
+                        </button>
                       </div>
                     ))
                   )}
                   <button /* onClick={() => addPeripheral(gateway.serialNumber)} */
                   >
                     Add Peripheral
+                  </button>
+                </td>
+                <td>
+                  <button /* onClick={() => addPeripheral(gateway.serialNumber)} */
+                  >
+                    Actions
                   </button>
                 </td>
               </tr>
