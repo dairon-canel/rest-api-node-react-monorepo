@@ -3,19 +3,12 @@ import './App.css';
 import GatewayList from './components/GatewayList';
 
 function App() {
-  const [apiMessage, setApiMessage] = useState('');
-
-  useEffect(() => {
-    fetch('/api/v1', { headers: { Accept: 'application/json' } })
-      .then(res => res.json())
-      .then(data => setApiMessage(data.message));
-  }, []);
-
   return (
-    <div>
-      <h1>Gateway Master</h1>
+    <div className="h-screen grid grid-rows-[auto_1fr] relative bg-slate-500">
+      <h1 className="text-center text-3xl py-8 font-extrabold text-base-100 self-center">
+        Gateway Master
+      </h1>
       <GatewayList />
-      <p>{apiMessage}</p>
     </div>
   );
 }
