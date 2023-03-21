@@ -4,6 +4,7 @@ import {
   addGateway,
   addPeripheral,
   deleteGateway,
+  deletePeripheral,
   getAllGateways,
   getGateway,
 } from '../controllers/gateways';
@@ -14,5 +15,8 @@ export default (router: express.Router) => {
   router.post('/gateways/create', addGateway);
   router.delete('/gateway/:id', deleteGateway);
   router.patch('/gateway/:serialNumber/addPeripheral', addPeripheral);
-  //router.post('/gateway/:serialNumber/deletePeripheral/:uid', addGateway);
+  router.patch(
+    '/gateway/:serialNumber/deletePeripheral/:uid',
+    deletePeripheral,
+  );
 };

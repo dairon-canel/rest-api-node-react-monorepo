@@ -108,3 +108,30 @@ export const addPeripheral = async (
     return res.status(400).send(handleValidationErrors(res, error));
   }
 };
+
+export const deletePeripheral = async (
+  req: express.Request,
+  res: express.Response,
+) => {
+  try {
+    const { serialNumber, uid } = req.params;
+
+    const gateway = await getGatewayBySerialNumber(serialNumber);
+
+    if (!gateway.peripheralDevices.some(pd => pd.uid === Number(uid))) {
+      return res.sendStatus(400);
+    }
+    const removedGateway = gateway.peripheralDevices.find(
+      pd => pd.uid === Number(uid),
+    );
+
+    gateway.peripheralDevices = gateway.peripheralDevices.filter(
+      pd => pd.uid !== Number(uid),
+    );
+    await gateway.save();
+
+    return res.status(200).json(removedGateway).end();
+  } catch (error) {
+    return res.status(400).send(handleValidationErrors(res, error));
+  }
+};
