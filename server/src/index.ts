@@ -28,7 +28,7 @@ app.use(bodyParser.json());
 
 //const server = http.createServer(app);
 
-console.log(process.env.MONGODB_URI);
+console.log(CONFIG);
 
 app.get('/api/v1', (req: express.Request, res: express.Response) => {
   res.send({ message: 'Hello from server' });
