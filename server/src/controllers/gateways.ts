@@ -3,6 +3,7 @@ import { handleValidationErrors } from '../helpers';
 
 import {
   createGateway,
+  deleteGatewayById,
   Gateway,
   getGatewayBySerialNumber,
   getGateways,
@@ -64,6 +65,21 @@ export const getGateway = async (
     }
 
     return res.status(200).json(gateway);
+  } catch (error) {
+    console.log(error);
+    return res.sendStatus(400);
+  }
+};
+
+export const deleteGateway = async (
+  req: express.Request,
+  res: express.Response,
+) => {
+  try {
+    const { id } = req.params;
+    const deletedGateway = await deleteGatewayById(id);
+
+    return res.json(deletedGateway);
   } catch (error) {
     console.log(error);
     return res.sendStatus(400);

@@ -57,7 +57,6 @@ const GatewaySchema = new mongoose.Schema<Gateway>({
     ],
     validate: {
       validator: function (v: PeripheralDevice[]) {
-        // Check the number of peripheral devices associated with the gateway
         return v.length <= 10;
       },
       message: 'No more than 10 peripheral devices are allowed',
@@ -74,5 +73,5 @@ export const createGateway = (values: Gateway) =>
   new GatewayModel(values).save().then(gateway => gateway.toObject());
 export const deleteGatewayById = (id: string) =>
   GatewayModel.findOneAndDelete({ _id: id });
-export const updateUserById = (id: string, values: Gateway) =>
+export const updateGatewayById = (id: string, values: Gateway) =>
   GatewayModel.findByIdAndUpdate(id, values);
