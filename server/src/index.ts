@@ -4,16 +4,10 @@ import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
 import compression from 'compression';
 import cors from 'cors';
-import dotenv from 'dotenv';
-import path from 'path';
 
 import { initializeDB, CONFIG } from './config';
 
 import router from './router';
-
-dotenv.config({
-  path: path.join(__dirname, '.env'),
-});
 
 const app = express();
 
@@ -27,8 +21,6 @@ app.use(cookieParser());
 app.use(bodyParser.json());
 
 //const server = http.createServer(app);
-
-console.log(CONFIG);
 
 app.get('/api/v1', (req: express.Request, res: express.Response) => {
   res.send({ message: 'Hello from server' });
