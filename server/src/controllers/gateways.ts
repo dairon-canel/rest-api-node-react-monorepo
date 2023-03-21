@@ -43,9 +43,21 @@ export const addGateway = async (
     const gateway = await createGateway(newGateway);
 
     return res.status(200).json(gateway).end();
-  } catch (error) {
-    console.log(error);
-    return res.sendStatus(400);
+  } catch (error: any) {
+    if (error.name === 'ValidationError') {
+      const errors: string[] = [];
+
+      console.log(error.errors.ipv4Address.properties.message);
+      Object.keys(error.errors).forEach(key => {
+        if (error?.errors[key]?.properties?.message) {
+          errors.push(error?.errors[key]?.properties?.message || '');
+        }
+      });
+      console.log(errors);
+
+      return res.status(400).send(errors);
+    }
+    res.status(500).send('Something went wrong');
   }
 };
 
