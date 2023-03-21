@@ -10,7 +10,7 @@ export interface Gateway {
 export interface PeripheralDevice {
   uid: number;
   vendor: string;
-  dateCreated: Date;
+  dateCreated?: Date;
   status: 'online' | 'offline';
 }
 

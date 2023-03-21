@@ -54,7 +54,6 @@ export const register = async (req: express.Request, res: express.Response) => {
     }
 
     const allUsers = await getUsers();
-    console.log(allUsers);
 
     const existingUser = await getUserByEmail(email);
 

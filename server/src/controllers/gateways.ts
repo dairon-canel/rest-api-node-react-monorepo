@@ -36,7 +36,7 @@ export const addGateway = async (
       newGateway.serialNumber,
     );
 
-    if (!existingGateway) {
+    if (existingGateway) {
       return res.sendStatus(400);
     }
 
