@@ -1,10 +1,12 @@
 import express from 'express';
+import { handleValidationErrors } from '../helpers';
 
 import {
   createGateway,
   Gateway,
   getGatewayBySerialNumber,
   getGateways,
+  PeripheralDevice,
 } from '../db/gateways';
 
 export const getAllGateways = async (
@@ -44,20 +46,7 @@ export const addGateway = async (
 
     return res.status(200).json(gateway).end();
   } catch (error: any) {
-    if (error.name === 'ValidationError') {
-      const errors: string[] = [];
-
-      console.log(error.errors.ipv4Address.properties.message);
-      Object.keys(error.errors).forEach(key => {
-        if (error?.errors[key]?.properties?.message) {
-          errors.push(error?.errors[key]?.properties?.message || '');
-        }
-      });
-      console.log(errors);
-
-      return res.status(400).send(errors);
-    }
-    res.status(500).send('Something went wrong');
+    return res.status(400).send(handleValidationErrors(res, error));
   }
 };
 
@@ -78,5 +67,28 @@ export const getGateway = async (
   } catch (error) {
     console.log(error);
     return res.sendStatus(400);
+  }
+};
+
+export const addPeripheral = async (
+  req: express.Request,
+  res: express.Response,
+) => {
+  try {
+    const { serialNumber } = req.params;
+    const newPeripheral: PeripheralDevice = req.body;
+
+    if (!newPeripheral) {
+      return res.sendStatus(400);
+    }
+
+    const gateway = await getGatewayBySerialNumber(serialNumber);
+
+    gateway.peripheralDevices = [...gateway.peripheralDevices, newPeripheral];
+    await gateway.save();
+
+    return res.status(200).json(gateway).end();
+  } catch (error) {
+    return res.status(400).send(handleValidationErrors(res, error));
   }
 };
