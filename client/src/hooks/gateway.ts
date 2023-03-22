@@ -47,6 +47,25 @@ export const useGateways = () => {
       });
   };
 
+  const deleteGateway = (id: string) => {
+    setLoadingCreation(true);
+    fetch(`/gateway/delete/${id}`, {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' },
+    })
+      .then(res => {
+        if (res.ok) {
+          fetchGateways();
+        }
+      })
+      .then(() => setLoadingCreation(false))
+      .catch(error => {
+        console.log(error);
+        setErrorCreation(true);
+        setLoadingCreation(false);
+      });
+  };
+
   return {
     gateways,
     loadingFetching,
@@ -54,6 +73,7 @@ export const useGateways = () => {
     loadingCreation,
     errorCreation,
     createGateway,
+    deleteGateway,
   };
 };
 

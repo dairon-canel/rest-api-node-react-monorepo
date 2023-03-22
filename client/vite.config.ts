@@ -7,6 +7,7 @@ export default defineConfig({
     proxy: {
       '/api/v1': 'http://localhost:5000',
       '/gateways': 'http://localhost:5000',
+      '/gateway': 'http://localhost:5000',
     },
   },
   plugins: [react()],

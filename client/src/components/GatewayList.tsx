@@ -11,6 +11,7 @@ const GatewayList = () => {
     errorFetching,
     loadingCreation,
     createGateway,
+    deleteGateway,
   } = useGateways();
   const {
     removeAddAction,
@@ -44,6 +45,12 @@ const GatewayList = () => {
     } catch (error) {
       alert(`An error has occurred: ${error}`);
     }
+  };
+
+  const handleDelete = () => {
+    const id = (selectedItem as Gateway)._id;
+    if (id) deleteGateway(id);
+    addButtonState.action();
   };
 
   return (
@@ -147,8 +154,9 @@ const GatewayList = () => {
         <button
           className={classNames('btn mt-1 self-end min-h-[2rem] h-[2rem]', {
             hidden: !selectedItem,
+            loading: loadingCreation || loadingFetching,
           })}
-          onClick={addButtonState.action}
+          onClick={handleDelete}
         >
           Delete
         </button>
