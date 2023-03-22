@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Gateway } from '../types';
+import { Gateway, PeripheralDevice } from '../types';
 
 export const useGateways = () => {
   const [gateways, setGateways] = useState<Gateway[]>();
@@ -26,8 +26,18 @@ export const useGateways = () => {
   return { gateways, loading, error };
 };
 
-export const useTableActions = () => {
-  const [selectedGateway, setSelectedGateway] = useState<Gateway | null>(null);
+interface ITableAddActionProps {
+  buttonCancelText: string;
+  buttonAddText: string;
+}
+
+export const useTableAddAction = ({
+  buttonCancelText,
+  buttonAddText,
+}: ITableAddActionProps) => {
+  const [selectedItem, setSelectedItem] = useState<
+    Gateway | PeripheralDevice | null
+  >(null);
   const [addAction, setAddAction] = useState<boolean>(false);
 
   const [removeAddAction, setRemoveAddAction] = useState<boolean>(false);
@@ -36,12 +46,12 @@ export const useTableActions = () => {
     if (!addButtonState.enabled) {
       setAddAction(true);
       return setAddButtonState({
-        buttonText: 'Cancel',
+        buttonText: buttonCancelText,
         enabled: true,
         action: () => {
           setAddAction(false);
           setAddButtonState({
-            buttonText: 'Add Gateway',
+            buttonText: buttonAddText,
             enabled: false,
             action: handleAddToggle,
           });
@@ -49,73 +59,56 @@ export const useTableActions = () => {
       });
     }
     return setAddButtonState({
-      buttonText: 'Add Gateway',
+      buttonText: buttonAddText,
       enabled: false,
       action: () => {},
     });
   };
 
   const [addButtonState, setAddButtonState] = useState({
-    buttonText: 'Add Gateway',
+    buttonText: buttonAddText,
     enabled: false,
     action: handleAddToggle,
   });
 
-  const toggleEditClick = (gateway: Gateway) => {
-    if (selectedGateway !== gateway) {
+  const toggleEditClick = (item: Gateway | PeripheralDevice) => {
+    if (selectedItem !== item) {
       setRemoveAddAction(true);
       setAddButtonState({
-        buttonText: 'Cancel',
+        buttonText: buttonCancelText,
         enabled: false,
         action: () => {
           setRemoveAddAction(false);
           setAddButtonState({
-            buttonText: 'Add Gateway',
+            buttonText: buttonAddText,
             enabled: false,
             action: handleAddToggle,
           });
-          setSelectedGateway(null);
+          setSelectedItem(null);
         },
       });
-      return setSelectedGateway(gateway);
+      return setSelectedItem(item);
     }
     setAddButtonState({
-      buttonText: 'Add Gateway',
+      buttonText: buttonAddText,
       enabled: false,
       action: handleAddToggle,
     });
-    return setSelectedGateway(null);
-  };
-
-  const [editButtonToggle, setEditButtonToggle] = useState(removeAddAction);
-
-  useEffect(() => {
-    if (!removeAddAction) setEditButtonToggle(false);
-  }, [removeAddAction]);
-
-  const handleEditToggle = (gateway: Gateway) => {
-    if (editButtonToggle) {
-      setEditButtonToggle(!editButtonToggle);
-      return toggleEditClick(gateway);
-    }
-    setEditButtonToggle(!editButtonToggle);
-    return toggleEditClick(gateway);
+    return setSelectedItem(null);
   };
 
   return {
     removeAddAction,
-    selectedGateway,
+    selectedItem,
     addAction,
     toggleEditClick,
     addButtonState,
-    handleEditToggle,
-    editButtonToggle,
   };
 };
 
-export const useTableItemActions = (
+export const useTableItemAddAction = (
   removeAddAction: boolean,
-  toggleEditClick: (gateway: Gateway) => void,
+  toggleEditClick: (item: Gateway | PeripheralDevice) => void,
 ) => {
   const [editButtonToggle, setEditButtonToggle] = useState(removeAddAction);
 
@@ -123,13 +116,13 @@ export const useTableItemActions = (
     if (!removeAddAction) setEditButtonToggle(false);
   }, [removeAddAction]);
 
-  const handleEditToggle = (gateway: Gateway) => {
+  const handleEditToggle = (item: Gateway | PeripheralDevice) => {
     if (editButtonToggle) {
       setEditButtonToggle(!editButtonToggle);
-      return toggleEditClick(gateway);
+      return toggleEditClick(item);
     }
     setEditButtonToggle(!editButtonToggle);
-    return toggleEditClick(gateway);
+    return toggleEditClick(item);
   };
 
   return { editButtonToggle, handleEditToggle };

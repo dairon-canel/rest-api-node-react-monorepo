@@ -1,19 +1,20 @@
 import classNames from 'classnames';
-import { useState } from 'react';
-import { useGateways, useTableActions } from '../hooks';
+import { useGateways, useTableAddAction } from '../hooks';
 import { Gateway } from '../types';
 import GatewayListItem from './GatewayListItem';
-//import { addPeripheral } from '../services';
 
 const GatewayList = () => {
   const { gateways, loading, error } = useGateways();
   const {
     removeAddAction,
-    selectedGateway,
+    selectedItem,
     addAction,
     toggleEditClick,
     addButtonState,
-  } = useTableActions();
+  } = useTableAddAction({
+    buttonCancelText: 'Cancel',
+    buttonAddText: 'Add Gateway',
+  });
 
   return (
     <div className="overflow-x-auto flex flex-col items-center px-4 py-4 border-t border-base-300">
@@ -49,7 +50,7 @@ const GatewayList = () => {
                 removeAddAction={removeAddAction}
                 key={key}
                 gateway={gateway}
-                selectedGateway={selectedGateway}
+                selectedGateway={selectedItem as Gateway | null}
                 addAction={addAction}
                 toggleEditClick={toggleEditClick}
               />

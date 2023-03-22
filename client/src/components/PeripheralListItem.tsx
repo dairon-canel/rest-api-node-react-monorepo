@@ -1,13 +1,14 @@
 import { format } from 'date-fns';
-import { FC, useEffect, useState } from 'react';
-import { PeripheralDevice } from '../types';
+import { FC } from 'react';
+import { useTableItemAddAction } from '../hooks';
+import { Gateway, PeripheralDevice } from '../types';
 
 interface IPeripheralListItemProps {
   removeAddAction: boolean;
   addAction: boolean;
   peripheral: PeripheralDevice;
   selectedPeripheral: PeripheralDevice | null;
-  toggleEditClick: (peripheral: PeripheralDevice) => void;
+  toggleEditClick: (item: Gateway | PeripheralDevice) => void;
 }
 
 const PeripheralListItem: FC<IPeripheralListItemProps> = ({
@@ -17,20 +18,10 @@ const PeripheralListItem: FC<IPeripheralListItemProps> = ({
   selectedPeripheral,
   toggleEditClick,
 }) => {
-  const [editButtonToggle, setEditButtonToggle] = useState(removeAddAction);
-
-  useEffect(() => {
-    if (!removeAddAction) setEditButtonToggle(false);
-  }, [removeAddAction]);
-
-  const handleEditToggle = (peripheral: PeripheralDevice) => {
-    if (editButtonToggle) {
-      setEditButtonToggle(!editButtonToggle);
-      return toggleEditClick(peripheral);
-    }
-    setEditButtonToggle(!editButtonToggle);
-    return toggleEditClick(peripheral);
-  };
+  const { editButtonToggle, handleEditToggle } = useTableItemAddAction(
+    removeAddAction,
+    toggleEditClick,
+  );
 
   if (editButtonToggle) {
     return (

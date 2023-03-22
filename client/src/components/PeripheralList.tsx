@@ -1,8 +1,9 @@
-import { FC, useState } from 'react';
+import { FC } from 'react';
 import classNames from 'classnames';
 import { format } from 'date-fns';
 import { PeripheralDevice } from '../types';
 import PeripheralListItem from './PeripheralListItem';
+import { useTableAddAction } from '../hooks';
 
 interface IPeripheralListProps {
   peripheralDevices: PeripheralDevice[];
@@ -13,66 +14,16 @@ const PeripheralList: FC<IPeripheralListProps> = ({
   peripheralDevices,
   gatewayName,
 }) => {
-  const [selectedPeripheral, setSelectedPeripheral] =
-    useState<PeripheralDevice | null>(null);
-  const [addAction, setAddAction] = useState<boolean>(false);
-
-  const [removeAddAction, setRemoveAddAction] = useState<boolean>(false);
-
-  const handleAddToggle = () => {
-    if (!addButtonState.enabled) {
-      setAddAction(true);
-      return setAddButtonState({
-        buttonText: 'Cancel',
-        enabled: true,
-        action: () => {
-          setAddAction(false);
-          setAddButtonState({
-            buttonText: 'Add Peripheral Device',
-            enabled: false,
-            action: handleAddToggle,
-          });
-        },
-      });
-    }
-    return setAddButtonState({
-      buttonText: 'Add Peripheral Device',
-      enabled: false,
-      action: () => {},
-    });
-  };
-
-  const [addButtonState, setAddButtonState] = useState({
-    buttonText: 'Add Peripheral Device',
-    enabled: false,
-    action: handleAddToggle,
+  const {
+    removeAddAction,
+    selectedItem,
+    addAction,
+    toggleEditClick,
+    addButtonState,
+  } = useTableAddAction({
+    buttonCancelText: 'Cancel',
+    buttonAddText: 'Add Peripheral Device',
   });
-
-  const toggleEditClick = (peripheral: PeripheralDevice) => {
-    if (selectedPeripheral !== peripheral) {
-      setRemoveAddAction(true);
-      setAddButtonState({
-        buttonText: 'Cancel',
-        enabled: false,
-        action: () => {
-          setRemoveAddAction(false);
-          setAddButtonState({
-            buttonText: 'Add Peripheral Device',
-            enabled: false,
-            action: handleAddToggle,
-          });
-          setSelectedPeripheral(null);
-        },
-      });
-      return setSelectedPeripheral(peripheral);
-    }
-    setAddButtonState({
-      buttonText: 'Add Gateway',
-      enabled: false,
-      action: handleAddToggle,
-    });
-    return setSelectedPeripheral(null);
-  };
 
   return (
     <div>
@@ -95,7 +46,7 @@ const PeripheralList: FC<IPeripheralListProps> = ({
               removeAddAction={removeAddAction}
               key={key}
               peripheral={peripheral}
-              selectedPeripheral={selectedPeripheral}
+              selectedPeripheral={selectedItem as PeripheralDevice}
               addAction={addAction}
               toggleEditClick={toggleEditClick}
             />

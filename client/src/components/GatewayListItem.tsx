@@ -1,7 +1,7 @@
 import classNames from 'classnames';
 import { FC } from 'react';
-import { useTableItemActions } from '../hooks';
-import { Gateway } from '../types';
+import { useTableItemAddAction } from '../hooks';
+import { Gateway, PeripheralDevice } from '../types';
 import PeripheralList from './PeripheralList';
 
 interface IGatewayListItemProps {
@@ -9,7 +9,7 @@ interface IGatewayListItemProps {
   addAction: boolean;
   gateway: Gateway;
   selectedGateway: Gateway | null;
-  toggleEditClick: (gateway: Gateway) => void;
+  toggleEditClick: (item: Gateway | PeripheralDevice) => void;
 }
 
 const GatewayListItem: FC<IGatewayListItemProps> = ({
@@ -19,7 +19,7 @@ const GatewayListItem: FC<IGatewayListItemProps> = ({
   selectedGateway,
   toggleEditClick,
 }) => {
-  const { editButtonToggle, handleEditToggle } = useTableItemActions(
+  const { editButtonToggle, handleEditToggle } = useTableItemAddAction(
     removeAddAction,
     toggleEditClick,
   );

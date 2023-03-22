@@ -1,1 +1,5 @@
-export { useGateways, useTableActions, useTableItemActions } from './gateway';
+export {
+  useGateways,
+  useTableAddAction,
+  useTableItemAddAction,
+} from './gateway';
