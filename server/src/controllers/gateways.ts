@@ -86,6 +86,34 @@ export const deleteGateway = async (
   }
 };
 
+export const editGateway = async (
+  req: express.Request,
+  res: express.Response,
+) => {
+  try {
+    const { serialNumber } = req.params;
+    const newGateway: Gateway = req.body;
+
+    if (!newGateway) {
+      return res.sendStatus(400);
+    }
+
+    const gateway = await getGatewayBySerialNumber(serialNumber);
+
+    if (!gateway) {
+      return res.sendStatus(400);
+    }
+
+    Object.assign(gateway, newGateway);
+    await gateway.save();
+
+    return res.status(200).json(gateway).end();
+  } catch (error) {
+    console.log(error);
+    return res.sendStatus(400);
+  }
+};
+
 export const addPeripheral = async (
   req: express.Request,
   res: express.Response,
