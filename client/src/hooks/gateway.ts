@@ -3,27 +3,58 @@ import { Gateway, PeripheralDevice } from '../types';
 
 export const useGateways = () => {
   const [gateways, setGateways] = useState<Gateway[]>();
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<boolean>(false);
+  const [loadingFetching, setLoadingFetching] = useState<boolean>(true);
+  const [loadingCreation, setLoadingCreation] = useState<boolean>(false);
+  const [errorFetching, setErrorFetching] = useState<boolean>(false);
+  const [errorCreation, setErrorCreation] = useState<boolean>(false);
 
   useEffect(() => {
+    fetchGateways();
+  }, []);
+
+  const fetchGateways = () =>
     fetch('/gateways', {
-      method: 'GET',
       headers: { Accept: 'application/json' },
     })
       .then(res => res.json())
       .then(data => {
         setGateways(data);
-        setLoading(false);
       })
+      .then(() => setLoadingFetching(false))
       .catch(error => {
         console.log(error);
-        setError(true);
-        setLoading(false);
+        setErrorFetching(true);
+        setLoadingFetching(false);
       });
-  }, []);
 
-  return { gateways, loading, error };
+  const createGateway = ({ gateway }: { gateway: Gateway }) => {
+    setLoadingCreation(true);
+    fetch('/gateways/create', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(gateway),
+    })
+      .then(res => {
+        if (res.ok) {
+          fetchGateways();
+        }
+      })
+      .then(() => setLoadingCreation(false))
+      .catch(error => {
+        console.log(error);
+        setErrorCreation(true);
+        setLoadingCreation(false);
+      });
+  };
+
+  return {
+    gateways,
+    loadingFetching,
+    errorFetching,
+    loadingCreation,
+    errorCreation,
+    createGateway,
+  };
 };
 
 interface ITableAddActionProps {

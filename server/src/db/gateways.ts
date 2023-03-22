@@ -51,10 +51,11 @@ const GatewaySchema = new mongoose.Schema<Gateway>({
           type: String,
           required: true,
           enum: ['online', 'offline'],
-          default: 'online',
+          default: 'offline',
         },
       },
     ],
+    default: [],
     validate: {
       validator: function (v: PeripheralDevice[]) {
         return v.length <= 10;
