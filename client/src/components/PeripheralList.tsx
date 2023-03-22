@@ -13,22 +13,65 @@ const PeripheralList: FC<IPeripheralListProps> = ({
   peripheralDevices,
   gatewayName,
 }) => {
-  const [addButtonState, setAddButtonState] = useState({
-    buttonText: 'Add Peripheral Device',
-    enabled: false,
-  });
+  const [selectedPeripheral, setSelectedPeripheral] =
+    useState<PeripheralDevice | null>(null);
+  const [addAction, setAddAction] = useState<boolean>(false);
+
+  const [removeAddAction, setRemoveAddAction] = useState<boolean>(false);
 
   const handleAddToggle = () => {
     if (!addButtonState.enabled) {
+      setAddAction(true);
       return setAddButtonState({
         buttonText: 'Cancel',
         enabled: true,
+        action: () => {
+          setAddAction(false);
+          setAddButtonState({
+            buttonText: 'Add Peripheral Device',
+            enabled: false,
+            action: handleAddToggle,
+          });
+        },
       });
     }
     return setAddButtonState({
       buttonText: 'Add Peripheral Device',
       enabled: false,
+      action: () => {},
     });
+  };
+
+  const [addButtonState, setAddButtonState] = useState({
+    buttonText: 'Add Peripheral Device',
+    enabled: false,
+    action: handleAddToggle,
+  });
+
+  const toggleEditClick = (peripheral: PeripheralDevice) => {
+    if (selectedPeripheral !== peripheral) {
+      setRemoveAddAction(true);
+      setAddButtonState({
+        buttonText: 'Cancel',
+        enabled: false,
+        action: () => {
+          setRemoveAddAction(false);
+          setAddButtonState({
+            buttonText: 'Add Peripheral Device',
+            enabled: false,
+            action: handleAddToggle,
+          });
+          setSelectedPeripheral(null);
+        },
+      });
+      return setSelectedPeripheral(peripheral);
+    }
+    setAddButtonState({
+      buttonText: 'Add Gateway',
+      enabled: false,
+      action: handleAddToggle,
+    });
+    return setSelectedPeripheral(null);
   };
 
   return (
@@ -47,11 +90,14 @@ const PeripheralList: FC<IPeripheralListProps> = ({
           </tr>
         </thead>
         <tbody>
-          {peripheralDevices.map((pd, key) => (
+          {peripheralDevices.map((peripheral, key) => (
             <PeripheralListItem
+              removeAddAction={removeAddAction}
               key={key}
-              pd={pd}
-              addEnabled={addButtonState.enabled}
+              peripheral={peripheral}
+              selectedPeripheral={selectedPeripheral}
+              addAction={addAction}
+              toggleEditClick={toggleEditClick}
             />
           ))}
           <tr className={classNames({ hidden: !addButtonState.enabled })}>
@@ -68,7 +114,7 @@ const PeripheralList: FC<IPeripheralListProps> = ({
       <button
         className="btn w-full mt-1 min-h-[2rem] h-[2rem]"
         disabled={!(peripheralDevices.length <= 10)}
-        onClick={handleAddToggle}
+        onClick={addButtonState.action}
       >
         {addButtonState.buttonText}
       </button>

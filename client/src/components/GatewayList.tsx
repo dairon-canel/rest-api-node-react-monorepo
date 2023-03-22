@@ -1,29 +1,19 @@
 import classNames from 'classnames';
 import { useState } from 'react';
-import { useGateways } from '../hooks';
-import PeripheralList from './PeripheralList';
+import { useGateways, useTableActions } from '../hooks';
+import { Gateway } from '../types';
+import GatewayListItem from './GatewayListItem';
 //import { addPeripheral } from '../services';
 
 const GatewayList = () => {
   const { gateways, loading, error } = useGateways();
-
-  const [addButtonState, setAddButtonState] = useState({
-    buttonText: 'Add Gateway',
-    enabled: false,
-  });
-
-  const handleAddToggle = () => {
-    if (!addButtonState.enabled) {
-      return setAddButtonState({
-        buttonText: 'Cancel',
-        enabled: true,
-      });
-    }
-    return setAddButtonState({
-      buttonText: 'Add Gateway',
-      enabled: false,
-    });
-  };
+  const {
+    removeAddAction,
+    selectedGateway,
+    addAction,
+    toggleEditClick,
+    addButtonState,
+  } = useTableActions();
 
   return (
     <div className="overflow-x-auto flex flex-col items-center px-4 py-4 border-t border-base-300">
@@ -42,53 +32,27 @@ const GatewayList = () => {
         </thead>
         <tbody>
           {loading ? (
-            <p>Loading...</p>
+            <tr>
+              <td>Loading...</td>
+            </tr>
           ) : error ? (
-            <p>Something happened...</p>
+            <tr>
+              <td>Something happened...</td>
+            </tr>
           ) : !gateways ? (
-            <p>No gateways yet...</p>
+            <tr>
+              <td>No gateways yet...</td>
+            </tr>
           ) : (
             gateways?.map((gateway, key) => (
-              <tr key={gateway.serialNumber}>
-                <td>{gateway.serialNumber}</td>
-                <td>{gateway.name}</td>
-                <td>{gateway.ipv4Address}</td>
-                <td>
-                  {!gateway.peripheralDevices ? (
-                    <p>No devices</p>
-                  ) : (
-                    <div className="grid grid-flow-col items-center justify-start">
-                      <p>
-                        {gateway.peripheralDevices.length === 1
-                          ? '1 Peripheral Device'
-                          : `${gateway.peripheralDevices.length} Peripheral Devices`}
-                      </p>
-                      <div className="dropdown dropdown-left ml-4">
-                        <label
-                          tabIndex={0}
-                          className="btn m-1 min-h-[2rem] h-[2rem]"
-                        >
-                          Details
-                        </label>
-                        <div
-                          tabIndex={0}
-                          className="dropdown-content menu p-2 shadow bg-base-200 rounded-box w-fit"
-                        >
-                          <PeripheralList
-                            peripheralDevices={gateway.peripheralDevices}
-                            gatewayName={gateway.name}
-                          />
-                        </div>
-                      </div>
-                    </div>
-                  )}
-                </td>
-                <td>
-                  <button className="btn mt-1 min-h-[2rem] h-[2rem]">
-                    Edit
-                  </button>
-                </td>
-              </tr>
+              <GatewayListItem
+                removeAddAction={removeAddAction}
+                key={key}
+                gateway={gateway}
+                selectedGateway={selectedGateway}
+                addAction={addAction}
+                toggleEditClick={toggleEditClick}
+              />
             ))
           )}
           <tr className={classNames({ hidden: !addButtonState.enabled })}>
@@ -104,7 +68,7 @@ const GatewayList = () => {
       </table>
       <button
         className="btn mt-1 min-h-[2rem] h-[2rem]"
-        onClick={handleAddToggle}
+        onClick={addButtonState.action}
       >
         {addButtonState.buttonText}
       </button>

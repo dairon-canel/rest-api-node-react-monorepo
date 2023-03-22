@@ -1,76 +1,86 @@
 import { format } from 'date-fns';
-import { FC, useState } from 'react';
+import { FC, useEffect, useState } from 'react';
 import { PeripheralDevice } from '../types';
 
 interface IPeripheralListItemProps {
-  key: number;
-  pd: PeripheralDevice;
-  addEnabled: boolean;
+  removeAddAction: boolean;
+  addAction: boolean;
+  peripheral: PeripheralDevice;
+  selectedPeripheral: PeripheralDevice | null;
+  toggleEditClick: (peripheral: PeripheralDevice) => void;
 }
 
 const PeripheralListItem: FC<IPeripheralListItemProps> = ({
-  key,
-  pd,
-  addEnabled,
+  removeAddAction,
+  addAction,
+  peripheral,
+  selectedPeripheral,
+  toggleEditClick,
 }) => {
-  const [editButtonState, setEditButtonState] = useState({
-    buttonText: 'Edit',
-    enabled: false,
-  });
-  const handleEditToggle = () => {
-    if (!editButtonState.enabled) {
-      return setEditButtonState({
-        buttonText: 'Ok',
-        enabled: true,
-      });
+  const [editButtonToggle, setEditButtonToggle] = useState(removeAddAction);
+
+  useEffect(() => {
+    if (!removeAddAction) setEditButtonToggle(false);
+  }, [removeAddAction]);
+
+  const handleEditToggle = (peripheral: PeripheralDevice) => {
+    if (editButtonToggle) {
+      setEditButtonToggle(!editButtonToggle);
+      return toggleEditClick(peripheral);
     }
-    return setEditButtonState({
-      buttonText: 'Edit',
-      enabled: false,
-    });
+    setEditButtonToggle(!editButtonToggle);
+    return toggleEditClick(peripheral);
   };
-  if (editButtonState.enabled) {
+
+  if (editButtonToggle) {
     return (
-      <tr key={key}>
-        <td>{pd.uid}</td>
+      <tr>
+        <td>{peripheral.uid}</td>
         <td>**</td>
         <td>
-          {pd.dateCreated
-            ? format(new Date(pd.dateCreated), 'yyyy/mm/dd')
+          {peripheral.dateCreated
+            ? format(new Date(peripheral.dateCreated), 'yyyy/mm/dd')
             : 'Not Available'}
         </td>
         <td>**</td>
         <td>
           <button
             className="btn mt-1 min-h-[2rem] h-[2rem]"
-            key={pd.uid}
-            disabled={addEnabled}
-            onClick={handleEditToggle}
+            onClick={() => handleEditToggle(peripheral)}
+            disabled={
+              (selectedPeripheral !== null &&
+                selectedPeripheral !== peripheral) ||
+              addAction
+            }
           >
-            {editButtonState.buttonText}
+            {selectedPeripheral === peripheral ? 'OK' : 'Edit'}
           </button>
         </td>
       </tr>
     );
   }
+
   return (
-    <tr key={key}>
-      <td>{pd.uid}</td>
-      <td>{pd.vendor}</td>
+    <tr>
+      <td>{peripheral.uid}</td>
+      <td>{peripheral.vendor}</td>
       <td>
-        {pd.dateCreated
-          ? format(new Date(pd.dateCreated), 'yyyy/mm/dd')
+        {peripheral.dateCreated
+          ? format(new Date(peripheral.dateCreated), 'yyyy/mm/dd')
           : 'Not Available'}
       </td>
-      <td>{pd.status}</td>
+      <td>{peripheral.status}</td>
       <td>
         <button
           className="btn mt-1 min-h-[2rem] h-[2rem]"
-          disabled={addEnabled}
-          onClick={handleEditToggle}
-          key={pd.uid}
+          onClick={() => handleEditToggle(peripheral)}
+          disabled={
+            (selectedPeripheral !== null &&
+              selectedPeripheral !== peripheral) ||
+            addAction
+          }
         >
-          {editButtonState.buttonText}
+          {selectedPeripheral === peripheral ? 'OK' : 'Edit'}
         </button>
       </td>
     </tr>

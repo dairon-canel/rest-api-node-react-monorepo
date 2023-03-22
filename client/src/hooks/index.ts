@@ -1,1 +1,1 @@
-export { useGateways } from './gateway';
+export { useGateways, useTableActions, useTableItemActions } from './gateway';
