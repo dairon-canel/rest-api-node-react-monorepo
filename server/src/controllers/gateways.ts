@@ -118,7 +118,7 @@ export const deletePeripheral = async (
 
     const gateway = await getGatewayBySerialNumber(serialNumber);
 
-    if (!gateway.peripheralDevices.some(pd => pd.uid === Number(uid))) {
+    if (!gateway?.peripheralDevices.some(pd => pd?.uid === Number(uid))) {
       return res.sendStatus(400);
     }
     const removedGateway = gateway.peripheralDevices.find(
