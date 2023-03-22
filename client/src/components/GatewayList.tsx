@@ -1,19 +1,36 @@
+import classNames from 'classnames';
+import { useState } from 'react';
 import { useGateways } from '../hooks';
-import { format } from 'date-fns';
+import PeripheralList from './PeripheralList';
 //import { addPeripheral } from '../services';
 
-function GatewayList() {
+const GatewayList = () => {
   const { gateways, loading, error } = useGateways();
+
+  const [addButtonState, setAddButtonState] = useState({
+    buttonText: 'Add Gateway',
+    enabled: false,
+  });
+
+  const handleAddToggle = () => {
+    if (!addButtonState.enabled) {
+      return setAddButtonState({
+        buttonText: 'Cancel',
+        enabled: true,
+      });
+    }
+    return setAddButtonState({
+      buttonText: 'Add Gateway',
+      enabled: false,
+    });
+  };
 
   return (
     <div className="overflow-x-auto flex flex-col items-center px-4 py-4 border-t border-base-300">
       <h1 className="text-xl text-base-100 mb-3 font-semibold">
         List of Gateways
       </h1>
-      <label htmlFor="modal-add-form" className="btn mb-3">
-        Add Gateway
-      </label>
-      <table className="table w-full">
+      <table className="table">
         <thead>
           <tr>
             <th>Serial Number</th>
@@ -57,47 +74,10 @@ function GatewayList() {
                           tabIndex={0}
                           className="dropdown-content menu p-2 shadow bg-base-200 rounded-box w-fit"
                         >
-                          <div className="overflow-x-auto">
-                            <h3 className="text-lg font-bold mb-1 w-full text-center">
-                              {gateway.name}
-                            </h3>
-                            <table className="table table-compact w-full">
-                              <thead>
-                                <tr>
-                                  <th>uid</th>
-                                  <th>vendor</th>
-                                  <th>dateCreated</th>
-                                  <th>status</th>
-                                  <th>Actions</th>
-                                </tr>
-                              </thead>
-                              <tbody>
-                                {gateway.peripheralDevices.map((pd, key) => (
-                                  <tr key={key}>
-                                    <td>{pd.uid}</td>
-                                    <td>{pd.vendor}</td>
-                                    <td>
-                                      {pd.dateCreated
-                                        ? format(
-                                            new Date(pd.dateCreated),
-                                            'yyyy/mm/dd',
-                                          )
-                                        : 'Not Available'}
-                                    </td>
-                                    <td>{pd.status}</td>
-                                    <td>
-                                      <button className="btn mt-1 min-h-[2rem] h-[2rem]">
-                                        Edit
-                                      </button>
-                                    </td>
-                                  </tr>
-                                ))}
-                              </tbody>
-                            </table>
-                            <button className="btn w-full mt-1 min-h-[2rem] h-[2rem]">
-                              Add Peripheral Device
-                            </button>
-                          </div>
+                          <PeripheralList
+                            peripheralDevices={gateway.peripheralDevices}
+                            gatewayName={gateway.name}
+                          />
                         </div>
                       </div>
                     </div>
@@ -111,28 +91,25 @@ function GatewayList() {
               </tr>
             ))
           )}
+          <tr className={classNames({ hidden: !addButtonState.enabled })}>
+            <td>Serial</td>
+            <td>Name</td>
+            <td>IP</td>
+            <td></td>
+            <td>
+              <button className="btn mt-1 min-h-[2rem] h-[2rem]">Add</button>
+            </td>
+          </tr>
         </tbody>
       </table>
+      <button
+        className="btn mt-1 min-h-[2rem] h-[2rem]"
+        onClick={handleAddToggle}
+      >
+        {addButtonState.buttonText}
+      </button>
     </div>
   );
-}
+};
 
 export default GatewayList;
-
-/* (
-                    gateway.peripheralDevices.map(peripheral => (
-                      <div key={peripheral.uid}>
-                        {`UID: ${peripheral.uid} Vendor: ${peripheral.vendor}{' '}
-                        Created:
-                        ${peripheral.dateCreated} Status: ${peripheral.status}`}
-                        <button /* onClick={() => addPeripheral(gateway.serialNumber)}
-                        >
-                          Remove Peripheral
-                        </button>
-                        <button /* onClick={() => addPeripheral(gateway.serialNumber)} 
-                        >
-                          Update Peripheral
-                        </button>
-                      </div>
-                    ))
-                  ) */

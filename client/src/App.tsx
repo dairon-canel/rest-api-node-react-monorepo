@@ -12,14 +12,6 @@ function App() {
         </h1>
         <GatewayList />
       </div>
-      <Modal modalKey="modal-add-form">
-        <h3 className="font-bold text-lg">ADD GATEWAY FORM</h3>
-        <div className="modal-action">
-          <label htmlFor="modal-add-form" className="btn">
-            Yay!
-          </label>
-        </div>
-      </Modal>
     </>
   );
 }
