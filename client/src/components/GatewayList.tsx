@@ -1,14 +1,18 @@
 import { useGateways } from '../hooks';
+import { format } from 'date-fns';
 //import { addPeripheral } from '../services';
 
 function GatewayList() {
   const { gateways, loading, error } = useGateways();
 
   return (
-    <div className="overflow-x-auto  flex flex-col items-center px-4 py-4 border-t border-base-300">
+    <div className="overflow-x-auto flex flex-col items-center px-4 py-4 border-t border-base-300">
       <h1 className="text-xl text-base-100 mb-3 font-semibold">
         List of Gateways
       </h1>
+      <label htmlFor="modal-add-form" className="btn mb-3">
+        Add Gateway
+      </label>
       <table className="table w-full">
         <thead>
           <tr>
@@ -36,34 +40,73 @@ function GatewayList() {
                   {!gateway.peripheralDevices ? (
                     <p>No devices</p>
                   ) : (
-                    <p>
-                      {gateway.peripheralDevices.length === 1
-                        ? '1 Peripheral Device'
-                        : `${gateway.peripheralDevices.length} Peripheral Devices`}
-                    </p>
+                    <div className="grid grid-flow-col items-center justify-start">
+                      <p>
+                        {gateway.peripheralDevices.length === 1
+                          ? '1 Peripheral Device'
+                          : `${gateway.peripheralDevices.length} Peripheral Devices`}
+                      </p>
+                      <div className="dropdown dropdown-left ml-4">
+                        <label
+                          tabIndex={0}
+                          className="btn m-1 min-h-[2rem] h-[2rem]"
+                        >
+                          Details
+                        </label>
+                        <div
+                          tabIndex={0}
+                          className="dropdown-content menu p-2 shadow bg-base-200 rounded-box w-fit"
+                        >
+                          <div className="overflow-x-auto">
+                            <h3 className="text-lg font-bold mb-1 w-full text-center">
+                              {gateway.name}
+                            </h3>
+                            <table className="table table-compact w-full">
+                              <thead>
+                                <tr>
+                                  <th>uid</th>
+                                  <th>vendor</th>
+                                  <th>dateCreated</th>
+                                  <th>status</th>
+                                  <th>Actions</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {gateway.peripheralDevices.map((pd, key) => (
+                                  <tr key={key}>
+                                    <td>{pd.uid}</td>
+                                    <td>{pd.vendor}</td>
+                                    <td>
+                                      {pd.dateCreated
+                                        ? format(
+                                            new Date(pd.dateCreated),
+                                            'yyyy/mm/dd',
+                                          )
+                                        : 'Not Available'}
+                                    </td>
+                                    <td>{pd.status}</td>
+                                    <td>
+                                      <button className="btn mt-1 min-h-[2rem] h-[2rem]">
+                                        Edit
+                                      </button>
+                                    </td>
+                                  </tr>
+                                ))}
+                              </tbody>
+                            </table>
+                            <button className="btn w-full mt-1 min-h-[2rem] h-[2rem]">
+                              Add Peripheral Device
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
                   )}
-                  <button /* onClick={() => addPeripheral(gateway.serialNumber)} */
-                  >
-                    Add Peripheral
-                  </button>
                 </td>
                 <td>
-                  <div className="dropdown dropdown-left">
-                    <label tabIndex={key} className="btn m-1">
-                      Actions
-                    </label>
-                    <ul
-                      tabIndex={key}
-                      className="dropdown-content menu p-2 shadow bg-base-300 rounded-box w-52"
-                    >
-                      <li>
-                        <a>Delete Gateway</a>
-                      </li>
-                      <li>
-                        <a>View Peripherals</a>
-                      </li>
-                    </ul>
-                  </div>
+                  <button className="btn mt-1 min-h-[2rem] h-[2rem]">
+                    Edit
+                  </button>
                 </td>
               </tr>
             ))
