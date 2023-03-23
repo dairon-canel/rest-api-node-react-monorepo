@@ -6,6 +6,7 @@ import {
   deleteGateway,
   deletePeripheral,
   editGateway,
+  editPeripheral,
   getAllGateways,
   getGateway,
 } from '../controllers/gateways';
@@ -21,4 +22,5 @@ export default (router: express.Router) => {
     '/gateway/:serialNumber/deletePeripheral/:uid',
     deletePeripheral,
   );
+  router.patch('/gateway/:serialNumber/editPeripheral/:uid', editPeripheral);
 };

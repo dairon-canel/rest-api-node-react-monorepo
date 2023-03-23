@@ -160,3 +160,31 @@ export const deletePeripheral = async (
     return res.status(400).send(handleValidationErrors(res, error));
   }
 };
+
+export const editPeripheral = async (
+  req: express.Request,
+  res: express.Response,
+) => {
+  try {
+    const { serialNumber, uid } = req.params;
+    const newGateway: Gateway = req.body;
+
+    if (!newGateway) {
+      return res.sendStatus(400);
+    }
+
+    const gateway = await getGatewayBySerialNumber(serialNumber);
+
+    if (!gateway?.peripheralDevices.some(pd => pd?.uid === Number(uid))) {
+      return res.sendStatus(400);
+    }
+
+    Object.assign(gateway.peripheralDevices, newGateway.peripheralDevices);
+    await gateway.save();
+
+    return res.status(200).json(gateway).end();
+  } catch (error) {
+    console.log(error);
+    return res.sendStatus(400);
+  }
+};
