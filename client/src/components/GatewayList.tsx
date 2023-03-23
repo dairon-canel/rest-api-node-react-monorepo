@@ -1,10 +1,14 @@
 import classNames from 'classnames';
-import { FormEvent } from 'react';
+import { FC, FormEvent, ReactElement, useState } from 'react';
 import { useGateways, useTableAddAction } from '../hooks';
 import { Gateway } from '../types';
 import GatewayListItem from './GatewayListItem';
 
-const GatewayList = () => {
+interface IGatewayList {
+  setModalElement: React.Dispatch<React.SetStateAction<ReactElement | null>>;
+}
+
+const GatewayList: FC<IGatewayList> = ({ setModalElement }) => {
   const {
     gateways,
     loading,
@@ -24,6 +28,8 @@ const GatewayList = () => {
     buttonAddText: 'Add Gateway',
   });
 
+  const [selectedGateway, setSelectedGateway] = useState<Gateway | null>(null);
+
   const sendForm = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
@@ -40,6 +46,7 @@ const GatewayList = () => {
           serialNumber: serialNumber.value,
           name: name.value,
           ipv4Address: ipv4Address.value,
+          peripheralDevices: [],
         },
       });
     } catch (error) {
@@ -106,6 +113,8 @@ const GatewayList = () => {
                 gateway={gateway}
                 selectedGateway={selectedItem as Gateway | null}
                 addAction={addAction}
+                setModalElement={setModalElement}
+                setSelectedGateway={setSelectedGateway}
                 toggleEditClick={toggleEditClick}
               />
             ))}

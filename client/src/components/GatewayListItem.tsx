@@ -1,5 +1,5 @@
 import classNames from 'classnames';
-import { FC } from 'react';
+import { FC, ReactElement } from 'react';
 import { useTableItemAddAction } from '../hooks';
 import { Gateway, PeripheralDevice } from '../types';
 import PeripheralList from './PeripheralList';
@@ -8,7 +8,9 @@ interface IGatewayListItemProps {
   removeAddAction: boolean;
   addAction: boolean;
   gateway: Gateway;
+  setModalElement: React.Dispatch<React.SetStateAction<ReactElement | null>>;
   selectedGateway: Gateway | null;
+  setSelectedGateway: React.Dispatch<React.SetStateAction<Gateway | null>>;
   toggleEditClick: (item: Gateway | PeripheralDevice) => void;
 }
 
@@ -16,7 +18,9 @@ const GatewayListItem: FC<IGatewayListItemProps> = ({
   removeAddAction,
   addAction,
   gateway,
+  setModalElement,
   selectedGateway,
+  setSelectedGateway,
   toggleEditClick,
 }) => {
   const { editButtonToggle, handleEditToggle } = useTableItemAddAction(
@@ -96,36 +100,30 @@ const GatewayListItem: FC<IGatewayListItemProps> = ({
           <td>{gateway.name}</td>
           <td>{gateway.ipv4Address}</td>
           <td>
-            {!gateway.peripheralDevices ? (
-              <p>No devices</p>
-            ) : (
-              <div className="grid grid-flow-col items-center justify-start">
-                <p>
-                  {gateway.peripheralDevices.length === 1
-                    ? '1 Peripheral Device'
-                    : `${gateway.peripheralDevices.length} Peripheral Devices`}
-                </p>
-                <div className="dropdown dropdown-left ml-4">
-                  <label
-                    tabIndex={0}
-                    className={classNames('btn m-1 min-h-[2rem] h-[2rem]', {
-                      'btn-disabled': selectedGateway !== null || addAction,
-                    })}
-                  >
-                    Details
-                  </label>
-                  <div
-                    tabIndex={0}
-                    className="dropdown-content menu p-2 shadow bg-base-200 rounded-box w-fit"
-                  >
+            <div className="grid grid-flow-col items-center justify-start">
+              <p>
+                {gateway.peripheralDevices.length === 1
+                  ? '1 Peripheral Device'
+                  : `${gateway.peripheralDevices.length} Peripheral Devices`}
+              </p>
+              <label
+                htmlFor="modal_details"
+                className={classNames('btn m-1 min-h-[2rem] h-[2rem]', {
+                  'btn-disabled': selectedGateway !== null || addAction,
+                })}
+                onClick={() =>
+                  setModalElement(
                     <PeripheralList
-                      peripheralDevices={gateway.peripheralDevices}
+                      gateway={gateway}
                       gatewayName={gateway.name}
-                    />
-                  </div>
-                </div>
-              </div>
-            )}
+                      setSelectedGateway={setSelectedGateway}
+                    />,
+                  )
+                }
+              >
+                Details
+              </label>
+            </div>
           </td>
           <td>
             <button

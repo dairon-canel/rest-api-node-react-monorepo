@@ -3,7 +3,7 @@ export interface Gateway {
   serialNumber: string;
   name: string;
   ipv4Address: string;
-  peripheralDevices?: PeripheralDevice[];
+  peripheralDevices: PeripheralDevice[] | [];
 }
 
 export interface PeripheralDevice {
