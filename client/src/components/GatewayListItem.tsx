@@ -10,7 +10,6 @@ interface IGatewayListItemProps {
   gateway: Gateway;
   setModalElement: React.Dispatch<React.SetStateAction<ReactElement | null>>;
   selectedGateway: Gateway | null;
-  setSelectedGateway: React.Dispatch<React.SetStateAction<Gateway | null>>;
   toggleEditClick: (item: Gateway | PeripheralDevice) => void;
 }
 
@@ -20,7 +19,6 @@ const GatewayListItem: FC<IGatewayListItemProps> = ({
   gateway,
   setModalElement,
   selectedGateway,
-  setSelectedGateway,
   toggleEditClick,
 }) => {
   const { editButtonToggle, handleEditToggle } = useTableItemAddAction(
@@ -112,13 +110,7 @@ const GatewayListItem: FC<IGatewayListItemProps> = ({
                   'btn-disabled': selectedGateway !== null || addAction,
                 })}
                 onClick={() =>
-                  setModalElement(
-                    <PeripheralList
-                      gateway={gateway}
-                      gatewayName={gateway.name}
-                      setSelectedGateway={setSelectedGateway}
-                    />,
-                  )
+                  setModalElement(<PeripheralList gateway={gateway} />)
                 }
               >
                 Details

@@ -7,16 +7,11 @@ import { useGateways, useTableAddAction } from '../hooks';
 
 interface IPeripheralListProps {
   gateway: Gateway;
-  gatewayName: string;
-  setSelectedGateway: React.Dispatch<React.SetStateAction<Gateway | null>>;
 }
 
-const PeripheralList: FC<IPeripheralListProps> = ({
-  gateway,
-  gatewayName,
-  setSelectedGateway,
-}) => {
-  const { loading } = useGateways();
+const PeripheralList: FC<IPeripheralListProps> = ({ gateway }) => {
+  const { loading, currentGateway, createPeripheral, setCurrentGateway } =
+    useGateways();
   const {
     removeAddAction,
     selectedItem,
@@ -32,7 +27,11 @@ const PeripheralList: FC<IPeripheralListProps> = ({
     'offline',
   );
 
-  const sendPeripheralForm = async (event: FormEvent<HTMLFormElement>) => {
+  useEffect(() => {
+    setCurrentGateway(gateway);
+  }, []);
+
+  const addPeripheralForm = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     const { vendor } = event.target as typeof event.target & {
@@ -40,20 +39,14 @@ const PeripheralList: FC<IPeripheralListProps> = ({
     };
 
     try {
-      console.log({
+      createPeripheral({
+        serialNumber: gateway.serialNumber,
         peripheral: {
           uid: gateway.peripheralDevices.length + 1,
           vendor: vendor.value,
           status: networkStatus,
         },
       });
-      /* createGateway({
-        gateway: {
-          serialNumber: serialNumber.value,
-          name: name.value,
-          ipv4Address: ipv4Address.value,
-        },
-      }); */
     } catch (error) {
       alert(`An error has occurred: ${error}`);
     }
@@ -66,11 +59,11 @@ const PeripheralList: FC<IPeripheralListProps> = ({
       ) : (
         <div>
           <h3 className="text-lg font-bold mb-1 w-full text-center">
-            {gatewayName}
+            {gateway.name}
           </h3>
           <form
             id="add_peripheral_form"
-            onSubmit={event => sendPeripheralForm(event)}
+            onSubmit={event => addPeripheralForm(event)}
           ></form>
           <table className="table table-compact w-full">
             <thead>
@@ -83,7 +76,7 @@ const PeripheralList: FC<IPeripheralListProps> = ({
               </tr>
             </thead>
             <tbody>
-              {gateway.peripheralDevices.map((peripheral, key) => (
+              {currentGateway?.peripheralDevices.map((peripheral, key) => (
                 <PeripheralListItem
                   removeAddAction={removeAddAction}
                   key={key}

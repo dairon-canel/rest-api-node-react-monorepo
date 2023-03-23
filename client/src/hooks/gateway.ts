@@ -2,13 +2,14 @@ import { useEffect, useState } from 'react';
 import { Gateway, PeripheralDevice } from '../types';
 
 export const useGateways = () => {
-  const [gateways, setGateways] = useState<Gateway[]>();
+  const [gateways, setGateways] = useState<Gateway[]>([]);
+  const [currentGateway, setCurrentGateway] = useState<Gateway>();
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<boolean>(false);
 
   useEffect(() => {
     fetchGateways();
-  }, []);
+  }, [currentGateway]);
 
   const fetchGateways = () => {
     setLoading(true);
@@ -95,13 +96,44 @@ export const useGateways = () => {
       });
   };
 
+  const createPeripheral = ({
+    serialNumber,
+    peripheral,
+  }: {
+    serialNumber: string;
+    peripheral: PeripheralDevice;
+  }) => {
+    setLoading(true);
+    fetch(`/gateway/${serialNumber}/addPeripheral`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(peripheral),
+    })
+      .then(res => res.json())
+      .then((data: Gateway) => {
+        const newGateways = [...gateways, data];
+        setGateways(newGateways);
+        setCurrentGateway(data);
+      })
+      .then(() => fetchGateways())
+      .then(() => setLoading(false))
+      .catch(error => {
+        console.log(error);
+        setError(true);
+        setLoading(false);
+      });
+  };
+
   return {
     gateways,
+    currentGateway,
     loading,
     error,
+    setCurrentGateway,
     createGateway,
     deleteGateway,
     editGateway,
+    createPeripheral,
   };
 };
 
@@ -140,7 +172,7 @@ export const useTableAddAction = ({
     return setAddButtonState({
       buttonText: buttonAddText,
       enabled: false,
-      action: () => {},
+      action: handleAddToggle,
     });
   };
 

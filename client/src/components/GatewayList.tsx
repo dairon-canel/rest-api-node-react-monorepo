@@ -28,8 +28,6 @@ const GatewayList: FC<IGatewayList> = ({ setModalElement }) => {
     buttonAddText: 'Add Gateway',
   });
 
-  const [selectedGateway, setSelectedGateway] = useState<Gateway | null>(null);
-
   const sendForm = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
@@ -114,7 +112,6 @@ const GatewayList: FC<IGatewayList> = ({ setModalElement }) => {
                 selectedGateway={selectedItem as Gateway | null}
                 addAction={addAction}
                 setModalElement={setModalElement}
-                setSelectedGateway={setSelectedGateway}
                 toggleEditClick={toggleEditClick}
               />
             ))}
