@@ -1,5 +1,5 @@
 import classNames from 'classnames';
-import { FC, FormEvent, ReactElement, useState } from 'react';
+import { FC, FormEvent, ReactElement } from 'react';
 import { useGateways, useTableAddAction } from '../hooks';
 import { Gateway } from '../types';
 import GatewayListItem from './GatewayListItem';
@@ -105,15 +105,16 @@ const GatewayList: FC<IGatewayList> = ({ setModalElement }) => {
           </thead>
           <tbody>
             {gateways?.map((gateway, key) => (
-              <GatewayListItem
-                key={key}
-                removeAddAction={removeAddAction}
-                gateway={gateway}
-                selectedGateway={selectedItem as Gateway | null}
-                addAction={addAction}
-                setModalElement={setModalElement}
-                toggleEditClick={toggleEditClick}
-              />
+              <tr key={key}>
+                <GatewayListItem
+                  removeAddAction={removeAddAction}
+                  gateway={gateway}
+                  selectedGateway={selectedItem as Gateway | null}
+                  addAction={addAction}
+                  setModalElement={setModalElement}
+                  toggleEditClick={toggleEditClick}
+                />
+              </tr>
             ))}
             <tr className={classNames({ hidden: !addButtonState.enabled })}>
               <td>

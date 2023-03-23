@@ -1,4 +1,4 @@
-import mongoose from 'mongoose';
+import mongoose, { Types } from 'mongoose';
 
 export interface Gateway {
   serialNumber: string;
@@ -76,5 +76,5 @@ export const createGateway = (values: Gateway) =>
   new GatewayModel(values).save().then(gateway => gateway.toObject());
 export const deleteGatewayById = (id: string) =>
   GatewayModel.findOneAndDelete({ _id: id });
-export const updateGatewayById = (id: string, values: Gateway) =>
+export const updateGatewayById = (id: Types.ObjectId, values: Gateway) =>
   GatewayModel.findByIdAndUpdate(id, values);

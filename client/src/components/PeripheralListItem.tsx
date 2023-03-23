@@ -1,5 +1,5 @@
 import { format } from 'date-fns';
-import { FC } from 'react';
+import { FC, useEffect, useState } from 'react';
 import { useTableItemAddAction } from '../hooks';
 import { Gateway, PeripheralDevice } from '../types';
 
@@ -9,6 +9,8 @@ interface IPeripheralListItemProps {
   peripheral: PeripheralDevice;
   selectedPeripheral: PeripheralDevice | null;
   toggleEditClick: (item: Gateway | PeripheralDevice) => void;
+  networkStatus: 'offline' | 'online';
+  setNetworkStatus: React.Dispatch<React.SetStateAction<'offline' | 'online'>>;
 }
 
 const PeripheralListItem: FC<IPeripheralListItemProps> = ({
@@ -17,14 +19,20 @@ const PeripheralListItem: FC<IPeripheralListItemProps> = ({
   peripheral,
   selectedPeripheral,
   toggleEditClick,
+  networkStatus,
+  setNetworkStatus,
 }) => {
   const { editButtonToggle, handleEditToggle } = useTableItemAddAction(
     removeAddAction,
     toggleEditClick,
   );
 
+  useEffect(() => {
+    setNetworkStatus('offline');
+  }, []);
+
   return (
-    <tr>
+    <>
       {editButtonToggle ? (
         <>
           <td>{peripheral.uid}</td>
@@ -46,21 +54,26 @@ const PeripheralListItem: FC<IPeripheralListItemProps> = ({
               : 'Not Available'}
           </td>
           <td>
-            <fieldset>
-              <input
-                form="edit_peripheral_form"
-                type="checkbox"
-                id="status"
-                placeholder={selectedPeripheral?.status || 'Status'}
-                required
-                className="input input-bordered input-sm"
-              />
-            </fieldset>
+            <button
+              type="button"
+              className="btn mt-1 min-h-[1.3rem] h-[1.3rem]"
+              onClick={() => {
+                if (networkStatus === 'offline') setNetworkStatus('online');
+                if (networkStatus === 'online') setNetworkStatus('offline');
+              }}
+            >
+              {networkStatus}
+            </button>
           </td>
           <td>
             <button
+              form="edit_peripheral_form"
+              type="submit"
               className="btn mt-1 min-h-[2rem] h-[2rem]"
-              onClick={() => handleEditToggle(peripheral, false)}
+              onClick={event => {
+                handleEditToggle(peripheral, false);
+                event.currentTarget.form?.requestSubmit();
+              }}
               disabled={
                 (selectedPeripheral !== null &&
                   selectedPeripheral !== peripheral) ||
@@ -96,7 +109,7 @@ const PeripheralListItem: FC<IPeripheralListItemProps> = ({
           </td>
         </>
       )}
-    </tr>
+    </>
   );
 };
 

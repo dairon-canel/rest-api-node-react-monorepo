@@ -27,7 +27,7 @@ const GatewayListItem: FC<IGatewayListItemProps> = ({
   );
 
   return (
-    <tr>
+    <>
       {editButtonToggle ? (
         <>
           <td>{gateway.serialNumber}</td>
@@ -132,7 +132,7 @@ const GatewayListItem: FC<IGatewayListItemProps> = ({
           </td>
         </>
       )}
-    </tr>
+    </>
   );
 };
 

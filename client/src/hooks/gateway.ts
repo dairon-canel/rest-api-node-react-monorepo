@@ -151,6 +151,36 @@ export const useGateways = () => {
       });
   };
 
+  const editPeripheral = ({
+    serialNumber,
+    uid,
+    peripheral,
+  }: {
+    serialNumber: string;
+    uid: number;
+    peripheral: Partial<PeripheralDevice>;
+  }) => {
+    setLoading(true);
+    fetch(`/gateway/${serialNumber}/editPeripheral/${uid}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(peripheral),
+    })
+      .then(res => res.json())
+      .then((data: Gateway) => {
+        const newGateways = [...gateways, data];
+        setGateways(newGateways);
+        setCurrentGateway(data);
+      })
+      .then(() => fetchGateways())
+      .then(() => setLoading(false))
+      .catch(error => {
+        console.log(error);
+        setError(true);
+        setLoading(false);
+      });
+  };
+
   return {
     gateways,
     currentGateway,
@@ -162,6 +192,7 @@ export const useGateways = () => {
     editGateway,
     createPeripheral,
     deletePeripheral,
+    editPeripheral,
   };
 };
 

@@ -8,7 +8,9 @@ import {
   getGatewayBySerialNumber,
   getGateways,
   PeripheralDevice,
+  updateGatewayById,
 } from '../db/gateways';
+import { Types } from 'mongoose';
 
 export const getAllGateways = async (
   req: express.Request,
@@ -167,9 +169,9 @@ export const editPeripheral = async (
 ) => {
   try {
     const { serialNumber, uid } = req.params;
-    const newGateway: Gateway = req.body;
+    const newPeripheral: PeripheralDevice = req.body;
 
-    if (!newGateway) {
+    if (!newPeripheral) {
       return res.sendStatus(400);
     }
 
@@ -179,8 +181,15 @@ export const editPeripheral = async (
       return res.sendStatus(400);
     }
 
-    Object.assign(gateway.peripheralDevices, newGateway.peripheralDevices);
-    await gateway.save();
+    const updatedPeripheralIndex = gateway.peripheralDevices.findIndex(
+      pd => pd.uid === Number(uid),
+    );
+    gateway.peripheralDevices[updatedPeripheralIndex] = {
+      ...gateway.peripheralDevices[updatedPeripheralIndex],
+      ...newPeripheral,
+    };
+
+    await updateGatewayById(gateway._id as Types.ObjectId, gateway);
 
     return res.status(200).json(gateway).end();
   } catch (error) {

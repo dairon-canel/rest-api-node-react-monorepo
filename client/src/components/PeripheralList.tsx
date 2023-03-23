@@ -16,6 +16,7 @@ const PeripheralList: FC<IPeripheralListProps> = ({ gateway }) => {
     createPeripheral,
     deletePeripheral,
     setCurrentGateway,
+    editPeripheral,
   } = useGateways();
   const {
     removeAddAction,
@@ -65,6 +66,29 @@ const PeripheralList: FC<IPeripheralListProps> = ({ gateway }) => {
     addButtonState.action();
   };
 
+  const handleEdit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    try {
+      const { vendor } = event.target as typeof event.target & {
+        vendor: { value: string };
+      };
+
+      if (currentGateway?.serialNumber)
+        editPeripheral({
+          serialNumber: currentGateway?.serialNumber,
+          uid: (selectedItem as PeripheralDevice).uid,
+          peripheral: {
+            uid: (selectedItem as PeripheralDevice).uid,
+            vendor: vendor.value,
+            status: networkStatus,
+          },
+        });
+    } catch (error) {
+      alert(`An error has occurred: ${error}`);
+    }
+  };
+
   return (
     <>
       {!gateway.peripheralDevices ? (
@@ -78,6 +102,10 @@ const PeripheralList: FC<IPeripheralListProps> = ({ gateway }) => {
             id="add_peripheral_form"
             onSubmit={event => addPeripheralForm(event)}
           ></form>
+          <form
+            id="edit_peripheral_form"
+            onSubmit={event => handleEdit(event)}
+          ></form>
           <table className="table table-compact w-full">
             <thead>
               <tr>
@@ -90,14 +118,18 @@ const PeripheralList: FC<IPeripheralListProps> = ({ gateway }) => {
             </thead>
             <tbody>
               {currentGateway?.peripheralDevices.map((peripheral, key) => (
-                <PeripheralListItem
-                  removeAddAction={removeAddAction}
-                  key={key}
-                  peripheral={peripheral}
-                  selectedPeripheral={selectedItem as PeripheralDevice}
-                  addAction={addAction}
-                  toggleEditClick={toggleEditClick}
-                />
+                <tr key={key}>
+                  <PeripheralListItem
+                    removeAddAction={removeAddAction}
+                    key={key}
+                    peripheral={peripheral}
+                    selectedPeripheral={selectedItem as PeripheralDevice}
+                    addAction={addAction}
+                    toggleEditClick={toggleEditClick}
+                    networkStatus={networkStatus}
+                    setNetworkStatus={setNetworkStatus}
+                  />
+                </tr>
               ))}
               <tr className={classNames({ hidden: !addButtonState.enabled })}>
                 <td>{gateway.peripheralDevices.length + 1}</td>
