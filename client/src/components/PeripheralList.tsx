@@ -1,4 +1,4 @@
-import { FC, FormEvent, useEffect } from 'react';
+import { FC, FormEvent, useEffect, useState } from 'react';
 import classNames from 'classnames';
 import { format } from 'date-fns';
 import { Gateway, PeripheralDevice } from '../types';
@@ -28,40 +28,25 @@ const PeripheralList: FC<IPeripheralListProps> = ({
     buttonAddText: 'Add Peripheral Device',
   });
 
+  const [networkStatus, setNetworkStatus] = useState<'offline' | 'online'>(
+    'offline',
+  );
+
   const sendPeripheralForm = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    /* console.log(
-      event.target?.elements[`vendor_${selectedGateway?.serialNumber}`].value,
-    ); */
 
-    /* const vendorKey = `vendor_${selectedGateway?.serialNumber}`;
-    const statusKey = `status_${selectedGateway?.serialNumber}`;
+    const { vendor } = event.target as typeof event.target & {
+      vendor: { value: string };
+    };
 
-    const { vendor, status } = event.target as typeof event.target & {
-      [key: string]: {
-        value: string;
-      };
-    }; */
     try {
-      /* console.log(
-        (event.target as typeof event.target)[id === vendorKey]
-          ?.value as string,
-      ); */
-      /* 
-      const { vendor, status } = event.target as typeof event.target & {
-        vendor: { value: string };
-        status: { value: string };
-      }; */
-      /* console.log({
+      console.log({
         peripheral: {
-          uid: selectedGateway
-            ? selectedGateway.peripheralDevices.length + 1
-            : 1,
-          vendor: event.target[`vendor_${selectedGateway?.serialNumber}`]
-            .value as string,
-          status: status.value,
+          uid: gateway.peripheralDevices.length + 1,
+          vendor: vendor.value,
+          status: networkStatus,
         },
-      }); */
+      });
       /* createGateway({
         gateway: {
           serialNumber: serialNumber.value,
@@ -115,7 +100,7 @@ const PeripheralList: FC<IPeripheralListProps> = ({
                     <input
                       form="add_peripheral_form"
                       type="text"
-                      id={`vendor_${gateway.serialNumber}`}
+                      id="vendor"
                       placeholder="Vendor"
                       className="input input-bordered input-sm"
                     />
@@ -123,25 +108,23 @@ const PeripheralList: FC<IPeripheralListProps> = ({
                 </td>
                 <td>{format(new Date(), 'yyyy/mm/dd')}</td>
                 <td>
-                  <fieldset>
-                    <input
-                      form="add_peripheral_form"
-                      type="text"
-                      id={`status_${gateway.serialNumber}`}
-                      placeholder="Status"
-                      className="input input-bordered input-sm"
-                    />
-                  </fieldset>
+                  <button
+                    type="button"
+                    className="btn mt-1 min-h-[1.3rem] h-[1.3rem]"
+                    onClick={() => {
+                      if (networkStatus === 'offline')
+                        setNetworkStatus('online');
+                      if (networkStatus === 'online')
+                        setNetworkStatus('offline');
+                    }}
+                  >
+                    {networkStatus}
+                  </button>
                 </td>
                 <td>
                   <button
                     type="submit"
                     form="add_peripheral_form"
-                    id={`submit_buttton_${gateway.serialNumber}`}
-                    onClick={event => {
-                      setSelectedGateway(gateway);
-                      event.currentTarget.form?.requestSubmit();
-                    }}
                     className={classNames('btn mt-1 min-h-[2rem] h-[2rem]', {
                       loading,
                     })}
