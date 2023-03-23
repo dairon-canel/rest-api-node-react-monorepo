@@ -3,16 +3,15 @@ import { Gateway, PeripheralDevice } from '../types';
 
 export const useGateways = () => {
   const [gateways, setGateways] = useState<Gateway[]>();
-  const [loadingFetching, setLoadingFetching] = useState<boolean>(true);
-  const [loadingCreation, setLoadingCreation] = useState<boolean>(false);
-  const [errorFetching, setErrorFetching] = useState<boolean>(false);
-  const [errorCreation, setErrorCreation] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<boolean>(false);
 
   useEffect(() => {
     fetchGateways();
   }, []);
 
-  const fetchGateways = () =>
+  const fetchGateways = () => {
+    setLoading(true);
     fetch('/gateways', {
       headers: { Accept: 'application/json' },
     })
@@ -20,15 +19,16 @@ export const useGateways = () => {
       .then(data => {
         setGateways(data);
       })
-      .then(() => setLoadingFetching(false))
+      .then(() => setLoading(false))
       .catch(error => {
         console.log(error);
-        setErrorFetching(true);
-        setLoadingFetching(false);
+        setError(true);
+        setLoading(false);
       });
+  };
 
   const createGateway = ({ gateway }: { gateway: Gateway }) => {
-    setLoadingCreation(true);
+    setLoading(true);
     fetch('/gateways/create', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -39,16 +39,16 @@ export const useGateways = () => {
           fetchGateways();
         }
       })
-      .then(() => setLoadingCreation(false))
+      .then(() => setLoading(false))
       .catch(error => {
         console.log(error);
-        setErrorCreation(true);
-        setLoadingCreation(false);
+        setError(true);
+        setLoading(false);
       });
   };
 
   const deleteGateway = (id: string) => {
-    setLoadingCreation(true);
+    setLoading(true);
     fetch(`/gateway/delete/${id}`, {
       method: 'DELETE',
       headers: { 'Content-Type': 'application/json' },
@@ -58,39 +58,38 @@ export const useGateways = () => {
           fetchGateways();
         }
       })
-      .then(() => setLoadingCreation(false))
+      .then(() => setLoading(false))
       .catch(error => {
         console.log(error);
-        setErrorCreation(true);
-        setLoadingCreation(false);
+        setError(true);
+        setLoading(false);
       });
   };
 
-  const editGateway = (id: string) => {
-    setLoadingCreation(true);
-    fetch(`/gateway/delete/${id}`, {
-      method: 'DELETE',
+  const editGateway = (serialNumber: string, gateway: Partial<Gateway>) => {
+    setLoading(true);
+    fetch(`/gateway/${serialNumber}`, {
+      method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(gateway),
     })
       .then(res => {
         if (res.ok) {
           fetchGateways();
         }
       })
-      .then(() => setLoadingCreation(false))
+      .then(() => setLoading(false))
       .catch(error => {
         console.log(error);
-        setErrorCreation(true);
-        setLoadingCreation(false);
+        setError(true);
+        setLoading(false);
       });
   };
 
   return {
     gateways,
-    loadingFetching,
-    errorFetching,
-    loadingCreation,
-    errorCreation,
+    loading,
+    error,
     createGateway,
     deleteGateway,
   };

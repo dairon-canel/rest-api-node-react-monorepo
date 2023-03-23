@@ -5,14 +5,8 @@ import { Gateway } from '../types';
 import GatewayListItem from './GatewayListItem';
 
 const GatewayList = () => {
-  const {
-    gateways,
-    loadingFetching,
-    errorFetching,
-    loadingCreation,
-    createGateway,
-    deleteGateway,
-  } = useGateways();
+  const { gateways, loading, error, createGateway, deleteGateway } =
+    useGateways();
   const {
     removeAddAction,
     selectedItem,
@@ -74,11 +68,11 @@ const GatewayList = () => {
           </tr>
         </thead>
         <tbody>
-          {loadingFetching ? (
+          {loading ? (
             <tr>
               <td>Loading...</td>
             </tr>
-          ) : errorFetching ? (
+          ) : error ? (
             <tr>
               <td>Something happened...</td>
             </tr>
@@ -141,7 +135,7 @@ const GatewayList = () => {
                 type="submit"
                 form="add_gateway_form"
                 className={classNames('btn mt-1 min-h-[2rem] h-[2rem]', {
-                  loading: loadingCreation || loadingFetching,
+                  loading,
                 })}
               >
                 Add
@@ -154,7 +148,7 @@ const GatewayList = () => {
         <button
           className={classNames('btn mt-1 self-end min-h-[2rem] h-[2rem]', {
             hidden: !selectedItem,
-            loading: loadingCreation || loadingFetching,
+            loading,
           })}
           onClick={handleDelete}
         >
@@ -162,7 +156,7 @@ const GatewayList = () => {
         </button>
         <button
           className={classNames('btn mt-1 min-h-[2rem] h-[2rem]', {
-            'btn-disabled': loadingCreation,
+            'btn-disabled': loading,
           })}
           onClick={addButtonState.action}
         >

@@ -26,7 +26,9 @@ const GatewaySchema = new mongoose.Schema<Gateway>({
     required: true,
     validate: {
       validator: function (v: string) {
-        return /\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b/.test(v);
+        return /^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(\.)){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/.test(
+          v,
+        );
       },
       message: 'Invalid IPv4 address',
     },
