@@ -10,8 +10,13 @@ interface IPeripheralListProps {
 }
 
 const PeripheralList: FC<IPeripheralListProps> = ({ gateway }) => {
-  const { loading, currentGateway, createPeripheral, setCurrentGateway } =
-    useGateways();
+  const {
+    loading,
+    currentGateway,
+    createPeripheral,
+    deletePeripheral,
+    setCurrentGateway,
+  } = useGateways();
   const {
     removeAddAction,
     selectedItem,
@@ -50,6 +55,14 @@ const PeripheralList: FC<IPeripheralListProps> = ({ gateway }) => {
     } catch (error) {
       alert(`An error has occurred: ${error}`);
     }
+  };
+
+  const handleDelete = () => {
+    deletePeripheral({
+      serialNumber: gateway.serialNumber,
+      uid: (selectedItem as PeripheralDevice).uid,
+    });
+    addButtonState.action();
   };
 
   return (
@@ -128,13 +141,13 @@ const PeripheralList: FC<IPeripheralListProps> = ({ gateway }) => {
               </tr>
             </tbody>
           </table>
-          <div className="grid grid-flow-col gap-48">
+          <div className="grid grid-flow-col gap-2">
             <button
               className={classNames('btn mt-1 self-end min-h-[2rem] h-[2rem]', {
                 hidden: !selectedItem,
                 loading,
               })}
-              onClick={() => {}}
+              onClick={handleDelete}
             >
               Delete
             </button>

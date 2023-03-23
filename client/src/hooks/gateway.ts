@@ -124,6 +124,33 @@ export const useGateways = () => {
       });
   };
 
+  const deletePeripheral = ({
+    serialNumber,
+    uid,
+  }: {
+    serialNumber: string;
+    uid: number;
+  }) => {
+    setLoading(true);
+    fetch(`/gateway/${serialNumber}/deletePeripheral/${uid}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+    })
+      .then(res => res.json())
+      .then((data: Gateway) => {
+        const newGateways = [...gateways, data];
+        setGateways(newGateways);
+        setCurrentGateway(data);
+      })
+      .then(() => fetchGateways())
+      .then(() => setLoading(false))
+      .catch(error => {
+        console.log(error);
+        setError(true);
+        setLoading(false);
+      });
+  };
+
   return {
     gateways,
     currentGateway,
@@ -134,6 +161,7 @@ export const useGateways = () => {
     deleteGateway,
     editGateway,
     createPeripheral,
+    deletePeripheral,
   };
 };
 

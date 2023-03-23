@@ -149,16 +149,13 @@ export const deletePeripheral = async (
     if (!gateway?.peripheralDevices.some(pd => pd?.uid === Number(uid))) {
       return res.sendStatus(400);
     }
-    const removedGateway = gateway.peripheralDevices.find(
-      pd => pd.uid === Number(uid),
-    );
 
     gateway.peripheralDevices = gateway.peripheralDevices.filter(
       pd => pd.uid !== Number(uid),
     );
     await gateway.save();
 
-    return res.status(200).json(removedGateway).end();
+    return res.status(200).json(gateway).end();
   } catch (error) {
     return res.status(400).send(handleValidationErrors(res, error));
   }
