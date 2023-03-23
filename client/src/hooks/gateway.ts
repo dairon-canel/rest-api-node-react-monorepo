@@ -66,7 +66,13 @@ export const useGateways = () => {
       });
   };
 
-  const editGateway = (serialNumber: string, gateway: Partial<Gateway>) => {
+  const editGateway = ({
+    serialNumber,
+    gateway,
+  }: {
+    serialNumber: string;
+    gateway: Partial<Gateway>;
+  }) => {
     setLoading(true);
     fetch(`/gateway/${serialNumber}`, {
       method: 'PATCH',
@@ -74,9 +80,12 @@ export const useGateways = () => {
       body: JSON.stringify(gateway),
     })
       .then(res => {
-        if (res.ok) {
-          fetchGateways();
+        if (!res.ok) {
+          setError(true);
+          setLoading(false);
+          return;
         }
+        fetchGateways();
       })
       .then(() => setLoading(false))
       .catch(error => {
@@ -92,6 +101,7 @@ export const useGateways = () => {
     error,
     createGateway,
     deleteGateway,
+    editGateway,
   };
 };
 
@@ -179,18 +189,17 @@ export const useTableItemAddAction = (
   removeAddAction: boolean,
   toggleEditClick: (item: Gateway | PeripheralDevice) => void,
 ) => {
-  const [editButtonToggle, setEditButtonToggle] = useState(removeAddAction);
+  const [editButtonToggle, setEditButtonToggle] = useState(false);
 
   useEffect(() => {
     if (!removeAddAction) setEditButtonToggle(false);
   }, [removeAddAction]);
 
-  const handleEditToggle = (item: Gateway | PeripheralDevice) => {
-    if (editButtonToggle) {
-      setEditButtonToggle(!editButtonToggle);
-      return toggleEditClick(item);
-    }
-    setEditButtonToggle(!editButtonToggle);
+  const handleEditToggle = (
+    item: Gateway | PeripheralDevice,
+    value: boolean,
+  ) => {
+    setEditButtonToggle(value);
     return toggleEditClick(item);
   };
 
