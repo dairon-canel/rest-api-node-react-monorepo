@@ -28,13 +28,35 @@ const PeripheralListItem: FC<IPeripheralListItemProps> = ({
       {editButtonToggle ? (
         <>
           <td>{peripheral.uid}</td>
-          <td>**</td>
+          <td>
+            <fieldset>
+              <input
+                form="edit_peripheral_form"
+                type="text"
+                id="vendor"
+                placeholder={selectedPeripheral?.vendor || 'Vendor'}
+                required
+                className="input input-bordered input-sm"
+              />
+            </fieldset>
+          </td>
           <td>
             {peripheral.dateCreated
               ? format(new Date(peripheral.dateCreated), 'yyyy/mm/dd')
               : 'Not Available'}
           </td>
-          <td>**</td>
+          <td>
+            <fieldset>
+              <input
+                form="edit_peripheral_form"
+                type="checkbox"
+                id="status"
+                placeholder={selectedPeripheral?.status || 'Status'}
+                required
+                className="input input-bordered input-sm"
+              />
+            </fieldset>
+          </td>
           <td>
             <button
               className="btn mt-1 min-h-[2rem] h-[2rem]"
