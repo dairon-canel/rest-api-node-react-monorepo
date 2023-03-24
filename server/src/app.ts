@@ -16,7 +16,13 @@ app.use(
 app.use(compression());
 app.use(cookieParser());
 app.use(bodyParser.json());
-
 app.use('/', router());
+
+app.get('/', (req, res) => {
+  return res.status(200).json({
+    data: 'sample',
+    error: null,
+  });
+});
 
 export default app;

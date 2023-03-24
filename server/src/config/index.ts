@@ -1,6 +1,7 @@
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import path from 'path';
+import { MongoMemoryServer } from 'mongodb-memory-server';
 
 dotenv.config({
   path: path.join(__dirname, '../.env'),
@@ -10,46 +11,31 @@ export const CONFIG = {
   API_VERSION: process.env.API_VERSION || 'v1',
   PORT: process.env.PORT || '5000',
   DB_HOST: process.env.MONGODB_URI || '',
-  SWAGGER_OPTIONS: {
-    swaggerDefinition: {
-      openapi: '3.0.0',
-      info: {
-        title: 'Extremely fast express-based API',
-        version: '1.0.0',
-        description:
-          'This is an api service for handling frontend app requests',
-        contact: {
-          name: 'Dairon Canel',
-          email: 'dcanelprofessional@gmail.com',
-        },
-      },
-      servers: [
-        {
-          url: 'http://127.0.0.1:3000/v1',
-        },
-      ],
-    },
-    apis: ['src/api/**/*.ts', '../packages/db/src/models/**/*.ts'],
-  },
 };
+
+let mongoServer: MongoMemoryServer;
 
 export const initializeDB = async () => {
   try {
-    await mongoose.connect(CONFIG.DB_HOST);
-    // listen for requests
-    console.log('The conection is Ok');
+    if (process.env.NODE_ENV === 'test') {
+      mongoServer = await MongoMemoryServer.create();
+      const mongoUri = mongoServer.getUri();
+
+      await mongoose.connect(mongoUri);
+      console.log('Connected to mock database');
+    } else {
+      await mongoose.connect(CONFIG.DB_HOST);
+      console.log('Connected to production database');
+    }
   } catch (err) {
     console.log(`${err} Could not Connect to the Database. Exiting Now...`);
     process.exit();
   }
 };
 
-export const disconnectDB = async () => {
-  try {
-    await mongoose.disconnect();
-    console.log('Disconnected');
-  } catch (err) {
-    console.log(`${err} Something happened...`);
-    process.exit();
+export const closeDB = async () => {
+  await mongoose.disconnect();
+  if (mongoServer) {
+    await mongoServer.stop();
   }
 };

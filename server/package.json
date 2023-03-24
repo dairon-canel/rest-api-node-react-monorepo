@@ -5,7 +5,7 @@
   "license": "MIT",
   "scripts": {
     "start": "nodemon",
-    "test": "jest --watch"
+    "test": "NODE_ENV=test jest --watch"
   },
   "dependencies": {
     "@types/compression": "^1.7.2",
