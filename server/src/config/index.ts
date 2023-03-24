@@ -43,3 +43,13 @@ export const initializeDB = async () => {
     process.exit();
   }
 };
+
+export const disconnectDB = async () => {
+  try {
+    await mongoose.disconnect();
+    console.log('Disconnected');
+  } catch (err) {
+    console.log(`${err} Something happened...`);
+    process.exit();
+  }
+};
