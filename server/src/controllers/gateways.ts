@@ -8,6 +8,7 @@ import {
   getGatewayBySerialNumber,
   getGateways,
   PeripheralDevice,
+  PeripheralDeviceModel,
   updateGatewayById,
 } from '../db/gateways';
 import { Types } from 'mongoose';
@@ -122,7 +123,7 @@ export const addPeripheral = async (
 ) => {
   try {
     const { serialNumber } = req.params;
-    const newPeripheral: PeripheralDevice = req.body;
+    const newPeripheral = new PeripheralDeviceModel(req.body);
 
     if (!newPeripheral) {
       return res.sendStatus(400);
@@ -130,7 +131,7 @@ export const addPeripheral = async (
 
     const gateway = await getGatewayBySerialNumber(serialNumber);
 
-    gateway.peripheralDevices = [...gateway.peripheralDevices, newPeripheral];
+    gateway.peripheralDevices.push(newPeripheral);
     await gateway.save();
 
     return res.status(200).json(gateway).end();
@@ -154,7 +155,8 @@ export const deletePeripheral = async (
 
     gateway.peripheralDevices = gateway.peripheralDevices.filter(
       pd => pd.uid !== Number(uid),
-    );
+    ) as Types.DocumentArray<PeripheralDevice>;
+
     await gateway.save();
 
     return res.status(200).json(gateway).end();
@@ -169,7 +171,7 @@ export const editPeripheral = async (
 ) => {
   try {
     const { serialNumber, uid } = req.params;
-    const newPeripheral: PeripheralDevice = req.body;
+    const newPeripheral = new PeripheralDeviceModel(req.body);
 
     if (!newPeripheral) {
       return res.sendStatus(400);
@@ -184,10 +186,12 @@ export const editPeripheral = async (
     const updatedPeripheralIndex = gateway.peripheralDevices.findIndex(
       pd => pd.uid === Number(uid),
     );
-    gateway.peripheralDevices[updatedPeripheralIndex] = {
-      ...gateway.peripheralDevices[updatedPeripheralIndex],
-      ...newPeripheral,
+    const updatedPeripheral = {
+      ...gateway.peripheralDevices[updatedPeripheralIndex].toObject(),
+      ...newPeripheral.toObject(),
     };
+
+    gateway.peripheralDevices[updatedPeripheralIndex] = updatedPeripheral;
 
     await updateGatewayById(gateway._id as Types.ObjectId, gateway);
 
