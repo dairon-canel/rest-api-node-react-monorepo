@@ -79,13 +79,13 @@ export async function getAllPeripheralByGatewayHandler(
   req: Request<ReadPeripheralInput['params']>,
   res: Response,
 ) {
-  const uid = req.params.uid;
+  const serialNumber = req.params.serialNumber;
 
-  const peripheral = findPeripheral({ uid });
+  const peripherals = await queryPeripheral({ gateway_id: serialNumber });
 
-  if (!peripheral) return res.sendStatus(404);
+  if (!peripherals) return res.sendStatus(404);
 
-  res.send(peripheral);
+  res.send(peripherals);
 }
 
 export async function deletePeripheralHandler(
