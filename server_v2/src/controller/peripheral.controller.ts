@@ -105,4 +105,6 @@ export async function deletePeripheralHandler(
   }
 
   await deletePeripheral({ uid });
+
+  res.send(peripheral);
 }
