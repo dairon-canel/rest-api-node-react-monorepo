@@ -17,6 +17,7 @@ const params = {
     uid: string({
       required_error: 'uid is required',
     }),
+    serialNumber: string(),
   }),
 };
 

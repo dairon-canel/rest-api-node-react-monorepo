@@ -15,6 +15,13 @@ export async function findGateway(
   return GatewayModel.findOne(query, {}, options);
 }
 
+export async function queryGateway(
+  query: FilterQuery<GatewayDocument>,
+  options: QueryOptions = { lean: true },
+) {
+  return GatewayModel.find(query, {}, options);
+}
+
 export async function findAndUpdateGateway(
   query: FilterQuery<GatewayDocument>,
   update: UpdateQuery<GatewayDocument>,

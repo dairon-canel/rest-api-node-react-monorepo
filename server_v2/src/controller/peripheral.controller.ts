@@ -55,6 +55,19 @@ export async function getPeripheralHandler(
   res.send(peripheral);
 }
 
+export async function getAllPeripheralHandler(
+  req: Request<ReadPeripheralInput['params']>,
+  res: Response,
+) {
+  const uid = req.params.uid;
+
+  const peripheral = findPeripheral({ uid });
+
+  if (!peripheral) return res.sendStatus(404);
+
+  res.send(peripheral);
+}
+
 export async function deletePeripheralHandler(
   req: Request<DeletePeripheralInput['params']>,
   res: Response,

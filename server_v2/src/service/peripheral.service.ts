@@ -15,6 +15,13 @@ export async function findPeripheral(
   return PeripheralModel.findOne(query, {}, options);
 }
 
+export async function queryPeripheral(
+  query: FilterQuery<PeripheralDocument>,
+  options: QueryOptions = { lean: true },
+) {
+  return PeripheralModel.find(query, {}, options);
+}
+
 export async function findAndUpdatePeripheral(
   query: FilterQuery<PeripheralDocument>,
   update: UpdateQuery<PeripheralDocument>,
