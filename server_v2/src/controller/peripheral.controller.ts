@@ -55,7 +55,8 @@ export async function getPeripheralHandler(
 ) {
   const uid = req.params.uid;
 
-  const peripheral = findPeripheral({ uid });
+  console.log(uid);
+  const peripheral = await findPeripheral({ uid });
 
   if (!peripheral) return res.sendStatus(404);
 

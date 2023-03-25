@@ -1,9 +1,9 @@
 import mongoose from 'mongoose';
 import { customAlphabet } from 'nanoid';
-import GatewayModel, { GatewayDocument } from './gateway.model';
+import { GatewayDocument } from './gateway.model';
 import { UserDocument } from './user.model';
 
-const nanoid = customAlphabet('abcdefghijklmnopqrstuvwxyz0123456789', 4);
+const nanoid = customAlphabet('abcdefghijklmnopqrstuvwxyz0123456789', 6);
 
 export interface PeripheralInput {
   user: UserDocument['_id'];

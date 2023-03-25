@@ -5,7 +5,7 @@ const payload = {
     gateway_id: string({
       required_error: 'Gateway id is required',
     })
-      .length(7, 'Gateway id must be 7 characters long')
+      .length(9, 'Gateway id must be 9 characters long')
       .startsWith('GW_', "Gateway id must start with 'GL_'"),
     vendor: string({
       required_error: 'Vendor is required',
@@ -16,10 +16,12 @@ const payload = {
 
 const params = {
   params: object({
-    uid: string({
-      required_error: 'uid is required',
-    }),
-    serialNumber: string(),
+    uid: string()
+      .optional()
+      .transform(e => (e === '' ? undefined : e)),
+    serialNumber: string()
+      .optional()
+      .transform(e => (e === '' ? undefined : e)),
   }),
 };
 
