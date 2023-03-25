@@ -5,12 +5,12 @@ import { PeripheralDocument } from './peripheral.model';
 const nanoid = customAlphabet('abcdefghijklmnopqrstuvwxyz0123456789', 4);
 
 export interface GatewayInput {
-  serialNumber: string;
   name: string;
   ipv4Address: string;
 }
 
 export interface GatewayDocument extends GatewayInput, mongoose.Document {
+  serialNumber: string;
   peripheralDevices: mongoose.Types.DocumentArray<PeripheralDocument>;
   createdAt: Date;
   updatedAt: Date;

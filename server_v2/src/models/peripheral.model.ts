@@ -6,12 +6,12 @@ const nanoid = customAlphabet('abcdefghijklmnopqrstuvwxyz0123456789', 4);
 
 export interface PeripheralInput {
   gateway: GatewayDocument['_id'];
-  uid: string;
   vendor: string;
-  status: 'ONLINE' | 'OFFLINE';
+  status: string;
 }
 
 export interface PeripheralDocument extends PeripheralInput, mongoose.Document {
+  uid: string;
   createdAt: Date;
   updatedAt: Date;
 }

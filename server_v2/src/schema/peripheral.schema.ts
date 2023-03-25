@@ -2,10 +2,7 @@ import { object, string, TypeOf, nativeEnum } from 'zod';
 
 const payload = {
   body: object({
-    Peripheral: string({
-      required_error: 'Peripheral id is required',
-    }).uuid('Invalid Peripheral id'),
-    uid: string({
+    gateway: string({
       required_error: 'Peripheral id is required',
     }).uuid('Invalid Peripheral id'),
     vendor: string({
