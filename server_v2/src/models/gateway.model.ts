@@ -1,9 +1,11 @@
 import mongoose from 'mongoose';
 import { customAlphabet } from 'nanoid';
+import { UserDocument } from './user.model';
 
 const nanoid = customAlphabet('abcdefghijklmnopqrstuvwxyz0123456789', 4);
 
 export interface GatewayInput {
+  user: UserDocument['_id'];
   name: string;
   ipv4Address: string;
 }
@@ -16,6 +18,7 @@ export interface GatewayDocument extends GatewayInput, mongoose.Document {
 
 const gatewaySchema = new mongoose.Schema(
   {
+    user: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
     serialNumber: {
       type: String,
       required: true,

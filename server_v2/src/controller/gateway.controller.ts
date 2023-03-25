@@ -10,15 +10,17 @@ import {
   findGateway,
   findAndUpdateGateway,
   deleteGateway,
+  queryGateway,
 } from '../service/gateway.service';
 
 export async function createGatewayHandler(
   req: Request<{}, {}, CreateGatewayInput['body']>,
   res: Response,
 ) {
+  const userId = res.locals.user._id;
   const body = req.body;
 
-  const gateway = await createGateway(body);
+  const gateway = await createGateway({ ...body, user: userId });
 
   return res.send(gateway);
 }
@@ -27,13 +29,18 @@ export async function updateGatewayHandler(
   req: Request<UpdateGatewayInput['params']>,
   res: Response,
 ) {
-  const serialNumber = req.params.serialNumber;
+  const userId = res.locals.user._id;
 
+  const serialNumber = req.params.serialNumber;
   const update = req.body;
 
   const gateway = await findGateway({ serialNumber });
 
   if (!gateway) return res.sendStatus(403);
+
+  if (String(gateway.user) !== userId) {
+    return res.sendStatus(403);
+  }
 
   const updatedGateway = await findAndUpdateGateway({ serialNumber }, update, {
     new: true,
@@ -55,28 +62,29 @@ export async function getGatewayHandler(
   res.send(gateway);
 }
 
-export async function getAllGatewayHandler(
-  req: Request<ReadGatewayInput['params']>,
-  res: Response,
-) {
-  const serialNumber = req.params.serialNumber;
+export async function getAllGatewayHandler(req: Request, res: Response) {
+  const gateways = await queryGateway({}, {});
 
-  const gateway = findGateway({ serialNumber });
+  if (!gateways) return res.sendStatus(404);
 
-  if (!gateway) return res.sendStatus(404);
-
-  res.send(gateway);
+  res.send(gateways);
 }
 
 export async function deleteGatewayHandler(
   req: Request<DeleteGatewayInput['params']>,
   res: Response,
 ) {
+  const userId = res.locals.user._id;
+
   const serialNumber = req.params.serialNumber;
 
-  const gateway = findGateway({ serialNumber });
+  const gateway = await findGateway({ serialNumber });
 
   if (!gateway) return res.sendStatus(404);
+
+  if (String(gateway.user) !== userId) {
+    return res.sendStatus(403);
+  }
 
   await deleteGateway({ serialNumber });
 }

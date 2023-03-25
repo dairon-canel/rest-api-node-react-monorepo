@@ -16,9 +16,10 @@ export async function createPeripheralHandler(
   req: Request<{}, {}, CreatePeripheralInput['body']>,
   res: Response,
 ) {
+  const userId = res.locals.user._id;
   const body = req.body;
 
-  const peripheral = await createPeripheral(body);
+  const peripheral = await createPeripheral({ ...body, user: userId });
 
   return res.send(peripheral);
 }
@@ -27,6 +28,8 @@ export async function updatePeripheralHandler(
   req: Request<UpdatePeripheralInput['params']>,
   res: Response,
 ) {
+  const userId = res.locals.user._id;
+
   const uid = req.params.uid;
 
   const update = req.body;
@@ -34,6 +37,10 @@ export async function updatePeripheralHandler(
   const peripheral = await findPeripheral({ uid });
 
   if (!peripheral) return res.sendStatus(403);
+
+  if (String(peripheral.user) !== userId) {
+    return res.sendStatus(403);
+  }
 
   const updatedPeripheral = await findAndUpdatePeripheral({ uid }, update, {
     new: true,
@@ -72,11 +79,17 @@ export async function deletePeripheralHandler(
   req: Request<DeletePeripheralInput['params']>,
   res: Response,
 ) {
+  const userId = res.locals.user._id;
+
   const uid = req.params.uid;
 
-  const peripheral = findPeripheral({ uid });
+  const peripheral = await findPeripheral({ uid });
 
   if (!peripheral) return res.sendStatus(404);
+
+  if (String(peripheral.user) !== userId) {
+    return res.sendStatus(403);
+  }
 
   await deletePeripheral({ uid });
 }

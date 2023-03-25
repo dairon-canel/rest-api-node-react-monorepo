@@ -50,12 +50,12 @@ function routes(app: Express) {
 
   app.post(
     '/api/gateways',
-    validateResource(createGatewaySchema),
+    [requireUser, validateResource(createGatewaySchema)],
     createGatewayHandler,
   );
   app.put(
     '/api/gateways/:serialNumber',
-    validateResource(updateGatewaySchema),
+    [requireUser, validateResource(updateGatewaySchema)],
     updateGatewayHandler,
   );
   app.get(
@@ -66,18 +66,18 @@ function routes(app: Express) {
   app.get('/api/gateways', getAllGatewayHandler);
   app.delete(
     '/api/gateways/:serialNumber',
-    validateResource(deleteGatewaySchema),
+    [requireUser, validateResource(deleteGatewaySchema)],
     deleteGatewayHandler,
   );
 
   app.post(
     '/api/peripherals/:serialNumber',
-    validateResource(createPeripheralSchema),
+    [requireUser, validateResource(createPeripheralSchema)],
     createPeripheralHandler,
   );
   app.put(
     '/api/peripherals/:uid',
-    validateResource(updatePeripheralSchema),
+    [requireUser, validateResource(updatePeripheralSchema)],
     updatePeripheralHandler,
   );
   app.get(
@@ -92,7 +92,7 @@ function routes(app: Express) {
   );
   app.delete(
     '/api/peripherals/:uid',
-    validateResource(deletePeripheralSchema),
+    [requireUser, validateResource(deletePeripheralSchema)],
     deletePeripheralHandler,
   );
 }

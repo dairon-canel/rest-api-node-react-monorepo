@@ -17,7 +17,7 @@ export async function findGateway(
 
 export async function queryGateway(
   query: FilterQuery<GatewayDocument>,
-  options: QueryOptions = { lean: true },
+  options: QueryOptions,
 ) {
   return GatewayModel.find(query, {}, options);
 }

@@ -6,7 +6,7 @@ const payload = {
       required_error: 'Name is required',
     }).min(3, 'Name should be at least 3 characters long'),
     ipv4Address: string({
-      required_error: 'Price is required',
+      required_error: 'Ip is required',
     }).ip({ version: 'v4', message: 'Invalid IPv4 address' }),
   }),
 };
