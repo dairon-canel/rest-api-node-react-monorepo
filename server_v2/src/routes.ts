@@ -63,7 +63,7 @@ function routes(app: Express) {
     validateResource(getGatewaySchema),
     getGatewayHandler,
   );
-  app.get('/api/gateways/all', getAllGatewayHandler);
+  app.get('/api/gateways', getAllGatewayHandler);
   app.delete(
     '/api/gateways/:serialNumber',
     validateResource(deleteGatewaySchema),
