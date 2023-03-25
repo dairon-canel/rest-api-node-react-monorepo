@@ -6,12 +6,12 @@ const nanoid = customAlphabet('abcdefghijklmnopqrstuvwxyz0123456789', 4);
 
 export interface PeripheralInput {
   gateway: GatewayDocument['_id'];
+  uid: string;
   vendor: string;
-  status: 'online' | 'offline';
+  status: 'ONLINE' | 'OFFLINE';
 }
 
 export interface PeripheralDocument extends PeripheralInput, mongoose.Document {
-  uid: string;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -32,8 +32,8 @@ const peripheralSchema = new mongoose.Schema(
     status: {
       type: String,
       required: true,
-      enum: ['online', 'offline'],
-      default: 'offline',
+      enum: ['ONLINE', 'OFFLINE'],
+      default: 'OFFLINE',
     },
   },
   {
