@@ -14,6 +14,15 @@ const payload = {
   }),
 };
 
+const updatePayload = {
+  body: object({
+    vendor: string({
+      required_error: 'Vendor is required',
+    }).min(3, 'Vendor should be at least 3 characters long'),
+    status: nativeEnum({ online: 'ONLINE', offline: 'OFFLINE' }),
+  }),
+};
+
 const params = {
   params: object({
     uid: string()
@@ -30,7 +39,7 @@ export const createPeripheralSchema = object({
 });
 
 export const updatePeripheralSchema = object({
-  ...payload,
+  ...updatePayload,
   ...params,
 });
 
