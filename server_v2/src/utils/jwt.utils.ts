@@ -26,8 +26,6 @@ export function verifyJwt(
   );
 
   try {
-    console.log('TOKEN', token);
-    console.log('PUBLIC KEY', publicKey);
     const decoded = jwt.verify(token, publicKey);
     return {
       valid: true,

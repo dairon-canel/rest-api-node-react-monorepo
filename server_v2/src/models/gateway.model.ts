@@ -1,6 +1,5 @@
 import mongoose from 'mongoose';
 import { customAlphabet } from 'nanoid';
-import { PeripheralDocument } from './peripheral.model';
 
 const nanoid = customAlphabet('abcdefghijklmnopqrstuvwxyz0123456789', 4);
 
@@ -11,7 +10,6 @@ export interface GatewayInput {
 
 export interface GatewayDocument extends GatewayInput, mongoose.Document {
   serialNumber: string;
-  peripheralDevices: mongoose.Types.DocumentArray<PeripheralDocument>;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -41,18 +39,6 @@ const gatewaySchema = new mongoose.Schema(
           );
         },
         message: 'Invalid IPv4 address',
-      },
-    },
-    peripheralDevices: {
-      type: mongoose.Types.DocumentArray<PeripheralDocument>,
-      default: [],
-      validate: {
-        validator: function (
-          v: mongoose.Types.DocumentArray<PeripheralDocument>,
-        ) {
-          return v.length <= 10;
-        },
-        message: 'No more than 10 peripheral devices are allowed',
       },
     },
   },
