@@ -55,6 +55,19 @@ export async function getGatewayHandler(
   res.send(gateway);
 }
 
+export async function getAllGatewayHandler(
+  req: Request<ReadGatewayInput['params']>,
+  res: Response,
+) {
+  const serialNumber = req.params.serialNumber;
+
+  const gateway = findGateway({ serialNumber });
+
+  if (!gateway) return res.sendStatus(404);
+
+  res.send(gateway);
+}
+
 export async function deleteGatewayHandler(
   req: Request<DeleteGatewayInput['params']>,
   res: Response,

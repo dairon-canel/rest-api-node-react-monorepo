@@ -55,7 +55,7 @@ export async function getPeripheralHandler(
   res.send(peripheral);
 }
 
-export async function getAllPeripheralHandler(
+export async function getAllPeripheralByGatewayHandler(
   req: Request<ReadPeripheralInput['params']>,
   res: Response,
 ) {
