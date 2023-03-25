@@ -1,6 +1,4 @@
-import { object, string, TypeOf, literal, union } from 'zod';
-
-const PeripheralStatusSchema = union([literal('ONLINE'), literal('OFFLINE')]);
+import { object, string, TypeOf, nativeEnum } from 'zod';
 
 const payload = {
   body: object({
@@ -13,7 +11,7 @@ const payload = {
     vendor: string({
       required_error: 'Vendor is required',
     }).min(3, 'Vendor should be at least 3 characters long'),
-    status: object({ status: PeripheralStatusSchema }),
+    status: nativeEnum({ online: 'ONLINE', offline: 'OFFLINE' }),
   }),
 };
 
