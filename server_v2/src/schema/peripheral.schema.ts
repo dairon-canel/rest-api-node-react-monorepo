@@ -2,9 +2,11 @@ import { object, string, TypeOf, nativeEnum } from 'zod';
 
 const payload = {
   body: object({
-    gateway: string({
-      required_error: 'Peripheral id is required',
-    }).uuid('Invalid Peripheral id'),
+    gateway_id: string({
+      required_error: 'Gateway id is required',
+    })
+      .length(7, 'Gateway id must be 7 characters long')
+      .startsWith('GW_', "Gateway id must start with 'GL_'"),
     vendor: string({
       required_error: 'Vendor is required',
     }).min(3, 'Vendor should be at least 3 characters long'),
