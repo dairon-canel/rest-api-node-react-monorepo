@@ -5,7 +5,8 @@
   "license": "MIT",
   "scripts": {
     "dev": "ts-node-dev --respawn --transpile-only src/app.ts",
-    "build": "tsc"
+    "build": "tsc",
+    "test": "jest --detectOpenHandles --watchAll --no-cache"
   },
   "dependencies": {
     "bcrypt": "^5.1.0",
