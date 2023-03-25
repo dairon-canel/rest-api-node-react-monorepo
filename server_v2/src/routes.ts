@@ -10,6 +10,7 @@ import {
   createPeripheralHandler,
   deletePeripheralHandler,
   getAllPeripheralByGatewayHandler,
+  getAllPeripheralHandler,
   getPeripheralHandler,
   updatePeripheralHandler,
 } from './controller/peripheral.controller';
@@ -79,6 +80,11 @@ function routes(app: Express) {
     '/api/peripherals/:uid',
     [requireUser, validateResource(updatePeripheralSchema)],
     updatePeripheralHandler,
+  );
+  app.get(
+    '/api/peripherals',
+    validateResource(getPeripheralSchema),
+    getAllPeripheralHandler,
   );
   app.get(
     '/api/peripherals/:uid',

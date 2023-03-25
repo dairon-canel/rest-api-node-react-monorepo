@@ -10,6 +10,7 @@ import {
   findPeripheral,
   findAndUpdatePeripheral,
   deletePeripheral,
+  queryPeripheral,
 } from '../service/peripheral.service';
 
 export async function createPeripheralHandler(
@@ -61,6 +62,17 @@ export async function getPeripheralHandler(
   if (!peripheral) return res.sendStatus(404);
 
   res.send(peripheral);
+}
+
+export async function getAllPeripheralHandler(
+  req: Request<ReadPeripheralInput['params']>,
+  res: Response,
+) {
+  const peripherals = await queryPeripheral({});
+
+  if (!peripherals) return res.sendStatus(404);
+
+  res.send(peripherals);
 }
 
 export async function getAllPeripheralByGatewayHandler(
