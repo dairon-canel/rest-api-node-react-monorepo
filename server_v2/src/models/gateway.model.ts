@@ -4,11 +4,16 @@ import { PeripheralDocument } from './peripheral.model';
 
 const nanoid = customAlphabet('abcdefghijklmnopqrstuvwxyz0123456789', 4);
 
-export interface GatewayDocument extends mongoose.Document {
-  serialNumber: string;
+export interface GatewayInput {
   name: string;
   ipv4Address: string;
+}
+
+export interface GatewayDocument extends GatewayInput, mongoose.Document {
+  serialNumber: string;
   peripheralDevices: mongoose.Types.DocumentArray<PeripheralDocument>;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 const gatewaySchema = new mongoose.Schema(
