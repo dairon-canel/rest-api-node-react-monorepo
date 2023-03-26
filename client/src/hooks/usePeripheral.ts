@@ -119,5 +119,12 @@ export const usePeripheral = ({ serialNumber }: { serialNumber: string }) => {
       });
   }; */
 
-  return { peripherals, isLoading, isError, isRefetching, createPeripheral };
+  return {
+    peripherals,
+    isLoading,
+    isError,
+    error,
+    isRefetching,
+    createPeripheral,
+  };
 };

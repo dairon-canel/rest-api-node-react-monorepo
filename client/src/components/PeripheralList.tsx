@@ -18,10 +18,16 @@ interface IPeripheralListProps {
 }
 
 const PeripheralList: FC<IPeripheralListProps> = ({ gateway }) => {
-  const { peripherals, isLoading, isError, isRefetching, createPeripheral } =
-    usePeripheral({
-      serialNumber: gateway.serialNumber,
-    });
+  const {
+    peripherals,
+    isLoading,
+    isError,
+    error,
+    isRefetching,
+    createPeripheral,
+  } = usePeripheral({
+    serialNumber: gateway.serialNumber,
+  });
   const {
     removeAddAction,
     selectedItem,
@@ -121,6 +127,7 @@ const PeripheralList: FC<IPeripheralListProps> = ({ gateway }) => {
           <h3 className="text-lg font-bold mb-1 w-full text-center">
             {gateway.name}
           </h3>
+          {error ? <div>{error}</div> : null}
           <form
             id="add_peripheral_form"
             onSubmit={handleCreateFormSubmit(createForm)}
