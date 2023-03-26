@@ -13,11 +13,12 @@ export const useGateways = () => {
 
   const fetchGateways = () => {
     setLoading(true);
-    fetch('/gateways', {
+    fetch('/api/gateways', {
       headers: { Accept: 'application/json' },
     })
       .then(res => res.json())
       .then(data => {
+        console.log(data);
         setGateways(data);
       })
       .then(() => setLoading(false))

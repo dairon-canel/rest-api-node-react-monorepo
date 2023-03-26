@@ -1,13 +1,12 @@
 import mongoose from 'mongoose';
 import { customAlphabet } from 'nanoid';
-import { UserDocument } from './user.model';
 
 const nanoid = customAlphabet('abcdefghijklmnopqrstuvwxyz0123456789', 6);
 
 export interface GatewayInput {
-  user: UserDocument['_id'];
   name: string;
   ipv4Address: string;
+  peripheralCount?: number;
 }
 
 export interface GatewayDocument extends GatewayInput, mongoose.Document {
@@ -18,7 +17,6 @@ export interface GatewayDocument extends GatewayInput, mongoose.Document {
 
 const gatewaySchema = new mongoose.Schema(
   {
-    user: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
     serialNumber: {
       type: String,
       required: true,
@@ -43,6 +41,11 @@ const gatewaySchema = new mongoose.Schema(
         },
         message: 'Invalid IPv4 address',
       },
+    },
+    peripheralCount: {
+      type: Number,
+      required: true,
+      default: 0,
     },
   },
   {

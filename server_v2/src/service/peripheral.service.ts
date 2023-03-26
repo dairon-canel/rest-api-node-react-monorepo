@@ -33,3 +33,9 @@ export async function findAndUpdatePeripheral(
 export async function deletePeripheral(query: FilterQuery<PeripheralDocument>) {
   return PeripheralModel.deleteOne(query);
 }
+
+export async function deletePeripheralsByGateway(
+  query: FilterQuery<PeripheralDocument>,
+) {
+  return PeripheralModel.deleteMany(query);
+}

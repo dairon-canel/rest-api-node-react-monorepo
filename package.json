@@ -9,7 +9,7 @@
     "client"
   ],
   "scripts": {
-    "dev": "concurrently \"yarn workspace server dev\" \"yarn workspace client dev\""
+    "dev": "concurrently \"yarn workspace server_v2 dev\" \"yarn workspace client dev\""
   },
   "devDependencies": {
     "concurrently": "^7.6.0"

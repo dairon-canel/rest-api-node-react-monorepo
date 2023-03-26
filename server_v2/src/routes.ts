@@ -1,4 +1,4 @@
-import { Express, Request, Response } from 'express';
+import { Express } from 'express';
 import {
   createGatewayHandler,
   deleteGatewayHandler,
@@ -14,13 +14,6 @@ import {
   getPeripheralHandler,
   updatePeripheralHandler,
 } from './controller/peripheral.controller';
-import {
-  createUserSessionHandler,
-  deleteSessionHandler,
-  getUserSessionsHandler,
-} from './controller/session.controller';
-import { createUserHandler } from './controller/user.controller';
-import requireUser from './middleware/requireUser';
 import validateResource from './middleware/validateResource';
 import {
   createGatewaySchema,
@@ -34,29 +27,16 @@ import {
   getPeripheralSchema,
   updatePeripheralSchema,
 } from './schema/peripheral.schema';
-import { createSessionSchema } from './schema/session.schema';
-import { createUserSchema } from './schema/user.schema';
 
 function routes(app: Express) {
-  app.get('/healthcheck', (req: Request, res: Response) => res.sendStatus(200));
-
-  app.post('/api/users', validateResource(createUserSchema), createUserHandler);
-  app.post(
-    '/api/sessions',
-    validateResource(createSessionSchema),
-    createUserSessionHandler,
-  );
-  app.get('/api/sessions', requireUser, getUserSessionsHandler);
-  app.delete('/api/sessions', requireUser, deleteSessionHandler);
-
   app.post(
     '/api/gateways',
-    [requireUser, validateResource(createGatewaySchema)],
+    validateResource(createGatewaySchema),
     createGatewayHandler,
   );
   app.put(
     '/api/gateways/:serialNumber',
-    [requireUser, validateResource(updateGatewaySchema)],
+    validateResource(updateGatewaySchema),
     updateGatewayHandler,
   );
   app.get(
@@ -67,18 +47,18 @@ function routes(app: Express) {
   app.get('/api/gateways', getAllGatewayHandler);
   app.delete(
     '/api/gateways/:serialNumber',
-    [requireUser, validateResource(deleteGatewaySchema)],
+    validateResource(deleteGatewaySchema),
     deleteGatewayHandler,
   );
 
   app.post(
     '/api/peripherals/:serialNumber',
-    [requireUser, validateResource(createPeripheralSchema)],
+    validateResource(createPeripheralSchema),
     createPeripheralHandler,
   );
   app.put(
     '/api/peripherals/:uid',
-    [requireUser, validateResource(updatePeripheralSchema)],
+    validateResource(updatePeripheralSchema),
     updatePeripheralHandler,
   );
   app.get(
@@ -98,7 +78,7 @@ function routes(app: Express) {
   );
   app.delete(
     '/api/peripherals/:uid',
-    [requireUser, validateResource(deletePeripheralSchema)],
+    validateResource(deletePeripheralSchema),
     deletePeripheralHandler,
   );
 }

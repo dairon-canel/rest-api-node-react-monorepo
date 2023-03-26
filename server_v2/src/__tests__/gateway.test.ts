@@ -2,8 +2,6 @@ import supertest from 'supertest';
 import createServer from '../utils/server';
 import mongoose from 'mongoose';
 import * as GatewayService from '../service/gateway.service';
-import * as UserService from '../service/user.service';
-import * as requireUser from '../middleware/requireUser';
 
 const app = createServer();
 
