@@ -31,21 +31,16 @@ const GatewayList: FC<IGatewayList> = ({ setModalElement }) => {
   const sendForm = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    const { serialNumber, name, ipv4Address } =
-      event.target as typeof event.target & {
-        serialNumber: { value: string };
-        name: { value: string };
-        ipv4Address: { value: string };
-      };
+    const { name, ipv4Address } = event.target as typeof event.target & {
+      serialNumber: { value: string };
+      name: { value: string };
+      ipv4Address: { value: string };
+    };
 
     try {
       createGateway({
-        gateway: {
-          serialNumber: serialNumber.value,
-          name: name.value,
-          ipv4Address: ipv4Address.value,
-          peripheralDevices: [],
-        },
+        name: name.value,
+        ipv4Address: ipv4Address.value,
       });
     } catch (error) {
       alert(`An error has occurred: ${error}`);
@@ -53,8 +48,8 @@ const GatewayList: FC<IGatewayList> = ({ setModalElement }) => {
   };
 
   const handleDelete = () => {
-    const id = (selectedItem as Gateway)._id;
-    if (id) deleteGateway(id);
+    const serialNumber = (selectedItem as Gateway).serialNumber;
+    if (serialNumber) deleteGateway(serialNumber);
     addButtonState.action();
   };
 
@@ -117,18 +112,7 @@ const GatewayList: FC<IGatewayList> = ({ setModalElement }) => {
               </tr>
             ))}
             <tr className={classNames({ hidden: !addButtonState.enabled })}>
-              <td>
-                <fieldset>
-                  <input
-                    form="add_gateway_form"
-                    type="text"
-                    id="serialNumber"
-                    placeholder="Serial Number"
-                    required
-                    className="input input-bordered input-sm"
-                  />
-                </fieldset>
-              </td>
+              <td>New Gateway</td>
               <td>
                 <fieldset>
                   <input

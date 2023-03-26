@@ -29,12 +29,18 @@ export const useGateways = () => {
       });
   };
 
-  const createGateway = ({ gateway }: { gateway: Gateway }) => {
+  const createGateway = ({
+    name,
+    ipv4Address,
+  }: {
+    name: string;
+    ipv4Address: string;
+  }) => {
     setLoading(true);
-    fetch('/gateways/create', {
+    fetch('/api/gateways', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(gateway),
+      body: JSON.stringify({ name, ipv4Address }),
     })
       .then(res => {
         if (res.ok) {
@@ -49,9 +55,9 @@ export const useGateways = () => {
       });
   };
 
-  const deleteGateway = (id: string) => {
+  const deleteGateway = (serialNumber: string) => {
     setLoading(true);
-    fetch(`/gateway/delete/${id}`, {
+    fetch(`/api/gateways/${serialNumber}`, {
       method: 'DELETE',
       headers: { 'Content-Type': 'application/json' },
     })
@@ -76,8 +82,8 @@ export const useGateways = () => {
     gateway: Partial<Gateway>;
   }) => {
     setLoading(true);
-    fetch(`/gateway/${serialNumber}`, {
-      method: 'PATCH',
+    fetch(`/api/gateways/${serialNumber}`, {
+      method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(gateway),
     })

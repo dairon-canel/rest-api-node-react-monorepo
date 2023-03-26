@@ -56,14 +56,14 @@ const GatewayListItem: FC<IGatewayListItemProps> = ({
             </fieldset>
           </td>
           <td>
-            {!gateway.peripheralDevices ? (
+            {!gateway.peripheralCount ? (
               <p>No devices</p>
             ) : (
               <div className="grid grid-flow-col items-center justify-start">
                 <p>
-                  {gateway.peripheralDevices.length === 1
+                  {gateway.peripheralCount === 1
                     ? '1 Peripheral Device'
-                    : `${gateway.peripheralDevices.length} Peripheral Devices`}
+                    : `${gateway.peripheralCount} Peripheral Devices`}
                 </p>
                 <div className="dropdown dropdown-left ml-4">
                   <label className="btn btn-disabled m-1 min-h-[2rem] h-[2rem]">
@@ -100,9 +100,9 @@ const GatewayListItem: FC<IGatewayListItemProps> = ({
           <td>
             <div className="grid grid-flow-col items-center justify-start">
               <p>
-                {gateway.peripheralDevices.length === 1
+                {gateway.peripheralCount === 1
                   ? '1 Peripheral Device'
-                  : `${gateway.peripheralDevices.length} Peripheral Devices`}
+                  : `${gateway.peripheralCount} Peripheral Devices`}
               </p>
               <label
                 htmlFor="modal_details"

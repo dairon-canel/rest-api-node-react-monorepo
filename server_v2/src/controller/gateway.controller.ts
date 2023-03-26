@@ -124,7 +124,9 @@ export async function deleteGatewayHandler(
 
     await deleteGateway({ serialNumber });
 
-    await deletePeripheralsByGateway({ gateway_id: serialNumber });
+    if (gateway.peripheralCount && gateway.peripheralCount >= 1) {
+      await deletePeripheralsByGateway({ gateway_id: serialNumber });
+    }
 
     res.send(gateway);
   } catch (error) {

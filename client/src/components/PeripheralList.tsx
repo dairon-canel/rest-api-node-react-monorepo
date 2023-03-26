@@ -46,12 +46,9 @@ const PeripheralList: FC<IPeripheralListProps> = ({ gateway }) => {
 
     try {
       createPeripheral({
-        serialNumber: gateway.serialNumber,
-        peripheral: {
-          uid: gateway.peripheralDevices.length + 1,
-          vendor: vendor.value,
-          status: networkStatus,
-        },
+        gateway_id: gateway.serialNumber,
+        vendor: vendor.value,
+        status: networkStatus,
       });
     } catch (error) {
       alert(`An error has occurred: ${error}`);
@@ -91,7 +88,7 @@ const PeripheralList: FC<IPeripheralListProps> = ({ gateway }) => {
 
   return (
     <>
-      {!gateway.peripheralDevices ? (
+      {!gateway.peripheralCount ? (
         <p>No devices</p>
       ) : (
         <div>

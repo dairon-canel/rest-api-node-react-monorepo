@@ -3,12 +3,13 @@ export interface Gateway {
   serialNumber: string;
   name: string;
   ipv4Address: string;
-  peripheralDevices: PeripheralDevice[] | [];
+  peripheralCount: number;
 }
 
 export interface PeripheralDevice {
   uid: number;
   vendor: string;
-  dateCreated?: Date;
-  status: 'online' | 'offline';
+  createdAt?: Date;
+  updatedAt?: Date;
+  status: 'ONLINE' | 'OFFLINE';
 }
