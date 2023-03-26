@@ -1,11 +1,28 @@
 export default {
   port: 1337,
-  dbUri: ``,
+  dbUri: 'mongodb://localhost:27017/rest-api-gateways',
   saltWorkFactor: 10,
   accessTokenTtl: '15m',
   refreshTokenTtl: '1y',
-  accessTokenPrivateKey: ``,
-  accessTokenPublicKey: ``,
-  refreshTokenPrivateKey: ``,
-  refreshTokenPublicKey: ``,
+  publicKey: `-----BEGIN PUBLIC KEY-----
+MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCS47R5HwcDXnO4HyiSPtfAA4s0
+9oi2si+ESVaAkpCHTvymjMBv1k231kOXBwwt8b6g1cqGu0ENf4yAtrLUm5jiLVbn
+7g7mahoQiRYFUfvt7YzxF0tPHgbIa8VmhbBQL60kC5HdIF113f+s806OaY73nOhJ
+mV4ERRY4Xj9pemLi8wIDAQAB
+-----END PUBLIC KEY-----`,
+  privateKey: `-----BEGIN RSA PRIVATE KEY-----
+MIICXQIBAAKBgQCS47R5HwcDXnO4HyiSPtfAA4s09oi2si+ESVaAkpCHTvymjMBv
+1k231kOXBwwt8b6g1cqGu0ENf4yAtrLUm5jiLVbn7g7mahoQiRYFUfvt7YzxF0tP
+HgbIa8VmhbBQL60kC5HdIF113f+s806OaY73nOhJmV4ERRY4Xj9pemLi8wIDAQAB
+AoGBAI8XJp2+7fQINK4uHDWq5j10tk0XxEJE/ijd0FhbblOBTHlqL6RCnV7yaNFc
+2i5/inXfDfWFwG9HyzUvxLF8CccA6rFOKM5fxvfwHvHFF6ZpJCLoQ2bhEOUayCxL
+W/E1xU20jPynt0i4UhqjpiZEF8cTpgMjBkd67RPwxok3ZSKhAkEAyACqzujxqjpK
+AcCPh2ItGGKO9U9L64W5PNAmTeQuT0/1DUIA/PeFRbCXx9aRqHIPibPRKXtEHx3e
+2UittjksyQJBALwEHXjdhOMTXjX0EXCEOugpioLGLdQi1YGe+DO47j8A6vpjMubT
+LP5fo8VVWaOA7sxD9ijGyqIlfVo5cTLNe9sCQQC6zoy7+C4JHqqTWmV1QYj3Vs9K
+Z4d09BEhsRWl+TQcFoW/nV/I5/SONDSAjnS8TdUffFooEZ9+JOtKLi06n8qpAkA5
+35Zm1uEJuLN+LhOUK8+qGOde27vNma9Yx+MkoJ8NW634xsIrVQN7hVr26g++iXh3
+/c9uu8ox4RJVzGqwtZmTAkApjFDpTg3G5cxNhOXGgioyoO17X105GtvOzNlQV/0i
+NMMqGvqmgPHbafcQtHJ7xnR41N1GuVbUIRecZ4wL7Y3X
+-----END RSA PRIVATE KEY-----`,
 };

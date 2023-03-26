@@ -12,18 +12,18 @@ const userId = new mongoose.Types.ObjectId().toString();
 const userPayload = {
   _id: userId,
   email: 'jane.doe@example.com',
-  name: 'jane Doe',
+  name: 'Jane Doe',
 };
 
 const userInput = {
-  email: 'rest@example.com',
+  email: 'test@example.com',
   name: 'Jane Doe',
   password: 'Password123',
   passwordConfirmation: 'Password123',
 };
 
 const sessionPayload = {
-  _id: new mongoose.Types.ObjectId().toString,
+  _id: new mongoose.Types.ObjectId().toString(),
   user: userId,
   valid: true,
   userAgent: 'PostmanRuntime/7.28.4',
@@ -33,6 +33,8 @@ const sessionPayload = {
 };
 
 describe('user', () => {
+  // user registration
+
   describe('user registration', () => {
     describe('given the username and password are valid', () => {
       it('should return the user payload', async () => {
@@ -76,7 +78,7 @@ describe('user', () => {
           .spyOn(UserService, 'createUser')
           .mockRejectedValueOnce('error creating user');
 
-        const { statusCode } = await supertest(app)
+        const { statusCode } = await supertest(createServer())
           .post('/api/users')
           .send(userInput);
 
@@ -104,7 +106,10 @@ describe('user', () => {
           get: () => {
             return 'a user agent';
           },
-          body: { email: 'test@example.com', password: 'Password123' },
+          body: {
+            email: 'test@example.com',
+            password: 'Password123',
+          },
         };
 
         const send = jest.fn();
