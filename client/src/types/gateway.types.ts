@@ -33,17 +33,22 @@ export const createGatewaySchema = object({
 
 export type CreateGatewayInput = TypeOf<typeof createGatewaySchema>;
 
+const ipSchema = string().ip({
+  version: 'v4',
+  message: 'Invalid IPv4 address',
+});
+
+type editIp = TypeOf<typeof ipSchema>;
+
 export const editGatewaySchema = object({
   name: string()
     .nonempty({
       message: 'Name is required',
     })
     .min(3, 'Name should be at least 3 characters long'),
-  ipv4Address: string({
-    required_error: 'Ip is required',
-  })
-    .ip({ version: 'v4', message: 'Invalid IPv4 address' })
-    .optional(),
+  ipv4Address: string()
+    .optional()
+    .transform(e => (e === '' ? undefined : (e as editIp))),
 });
 
 export type EditGatewayInput = TypeOf<typeof editGatewaySchema>;

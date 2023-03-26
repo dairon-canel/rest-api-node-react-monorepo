@@ -1,5 +1,6 @@
 import classNames from 'classnames';
 import { FC, ReactElement } from 'react';
+import { UseFormRegister, FieldErrors } from 'react-hook-form';
 import { useTableItemAddAction } from '../hooks';
 import { Gateway, PeripheralDevice } from '../types';
 import PeripheralList from './PeripheralList';
@@ -11,6 +12,14 @@ interface IGatewayListItemProps {
   setModalElement: React.Dispatch<React.SetStateAction<ReactElement | null>>;
   selectedGateway: Gateway | null;
   toggleEditClick: (item: Gateway | PeripheralDevice) => void;
+  editRegister: UseFormRegister<{
+    name: string;
+    ipv4Address?: string | undefined;
+  }>;
+  editFormErrors: FieldErrors<{
+    name: string;
+    ipv4Address?: string | undefined;
+  }>;
 }
 
 const GatewayListItem: FC<IGatewayListItemProps> = ({
@@ -20,6 +29,8 @@ const GatewayListItem: FC<IGatewayListItemProps> = ({
   setModalElement,
   selectedGateway,
   toggleEditClick,
+  editRegister,
+  editFormErrors,
 }) => {
   const { editButtonToggle, handleEditToggle } = useTableItemAddAction(
     removeAddAction,
@@ -32,7 +43,7 @@ const GatewayListItem: FC<IGatewayListItemProps> = ({
         <>
           <td>{gateway.serialNumber}</td>
           <td>
-            <fieldset>
+            <div className="form-element">
               <input
                 form="edit_gateway_form"
                 type="text"
@@ -40,8 +51,10 @@ const GatewayListItem: FC<IGatewayListItemProps> = ({
                 placeholder={selectedGateway?.name || 'Name'}
                 required
                 className="input input-bordered input-sm"
+                {...editRegister('name')}
               />
-            </fieldset>
+              <p>{editFormErrors.name?.message}</p>
+            </div>
           </td>
           <td>
             <fieldset>
@@ -50,9 +63,10 @@ const GatewayListItem: FC<IGatewayListItemProps> = ({
                 type="text"
                 id="ipv4Address"
                 placeholder={selectedGateway?.ipv4Address || 'IPv4 Address'}
-                required
                 className="input input-bordered input-sm"
+                {...editRegister('ipv4Address')}
               />
+              <p>{editFormErrors.ipv4Address?.message}</p>
             </fieldset>
           </td>
           <td>

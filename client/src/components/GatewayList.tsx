@@ -1,6 +1,6 @@
 import classNames from 'classnames';
 import { useForm } from 'react-hook-form';
-import { FC, FormEvent, ReactElement, useState } from 'react';
+import { FC, ReactElement } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useTableAddAction } from '../hooks';
 import { useGateway } from '../hooks/useGateway';
@@ -8,8 +8,8 @@ import {
   Gateway,
   createGatewaySchema,
   CreateGatewayInput,
-  editGatewaySchema,
   EditGatewayInput,
+  editGatewaySchema,
 } from '../types';
 import GatewayListItem from './GatewayListItem';
 
@@ -41,20 +41,32 @@ const GatewayList: FC<IGatewayList> = ({ setModalElement }) => {
   } = useGateway();
 
   const {
-    register,
-    formState: { errors },
-    handleSubmit,
+    register: createRegister,
+    formState: { errors: createFormErrors },
+    handleSubmit: handleCreateFormSubmit,
   } = useForm<CreateGatewayInput>({
     resolver: zodResolver(createGatewaySchema),
   });
 
-  const sendForm = (values: CreateGatewayInput) => {
-    try {
-      createGateway(values);
-      addButtonState.action();
-    } catch (error) {
-      alert(`An error has occurred: ${error}`);
-    }
+  const {
+    register: editRegister,
+    formState: { errors: editFormErrors },
+    handleSubmit: handleEditFormSubmit,
+  } = useForm<EditGatewayInput>({
+    resolver: zodResolver(editGatewaySchema),
+  });
+
+  const createForm = (values: CreateGatewayInput) => {
+    createGateway(values);
+    addButtonState.action();
+  };
+
+  const editForm = async (values: EditGatewayInput) => {
+    editGateway({
+      serialNumber: (selectedItem as Gateway).serialNumber,
+      gateway: values,
+    });
+    addButtonState.action();
   };
 
   const handleDelete = () => {
@@ -65,37 +77,20 @@ const GatewayList: FC<IGatewayList> = ({ setModalElement }) => {
     addButtonState.action();
   };
 
-  const handleEdit = async (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-
-    try {
-      const { name, ipv4Address } = event.target as typeof event.target & {
-        name: { value: string };
-        ipv4Address?: { value: string };
-      };
-      console.log(name, ipv4Address);
-      editGateway({
-        serialNumber: (selectedItem as Gateway).serialNumber,
-        gateway: {
-          name: name?.value || (selectedItem as Gateway).name,
-          ipv4Address:
-            ipv4Address?.value || (selectedItem as Gateway).ipv4Address,
-        },
-      });
-      addButtonState.action();
-    } catch (error) {
-      alert(`An error has occurred: ${error}`);
-    }
-  };
-
   return (
     <div className="overflow-x-auto flex flex-col items-center px-4 py-4 border-t border-base-300">
       <h1 className="text-xl text-base-100 mb-3 font-semibold">
         List of Gateways
       </h1>
       {error ? <div>{error}</div> : null}
-      <form id="add_gateway_form" onSubmit={handleSubmit(sendForm)}></form>
-      <form id="edit_gateway_form" onSubmit={event => handleEdit(event)}></form>
+      <form
+        id="add_gateway_form"
+        onSubmit={handleCreateFormSubmit(createForm)}
+      ></form>
+      <form
+        id="edit_gateway_form"
+        onSubmit={handleEditFormSubmit(editForm)}
+      ></form>
       {isLoading || isRefetching ? (
         <div>Loading...</div>
       ) : isError ? (
@@ -121,6 +116,8 @@ const GatewayList: FC<IGatewayList> = ({ setModalElement }) => {
                   addAction={addAction}
                   setModalElement={setModalElement}
                   toggleEditClick={toggleEditClick}
+                  editRegister={editRegister}
+                  editFormErrors={editFormErrors}
                 />
               </tr>
             ))}
@@ -134,9 +131,9 @@ const GatewayList: FC<IGatewayList> = ({ setModalElement }) => {
                     id="name"
                     placeholder="Name"
                     className="input input-bordered input-sm"
-                    {...register('name')}
+                    {...createRegister('name')}
                   />
-                  <p>{errors.name?.message}</p>
+                  <p>{createFormErrors.name?.message}</p>
                 </div>
               </td>
               <td>
@@ -147,9 +144,9 @@ const GatewayList: FC<IGatewayList> = ({ setModalElement }) => {
                     id="ipv4Address"
                     placeholder="Ipv4 Address"
                     className="input input-bordered input-sm"
-                    {...register('ipv4Address')}
+                    {...createRegister('ipv4Address')}
                   />
-                  <p>{errors.ipv4Address?.message}</p>
+                  <p>{createFormErrors.ipv4Address?.message}</p>
                 </div>
               </td>
               <td>New Devices</td>
