@@ -7,11 +7,7 @@ export const useGateways = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<boolean>(false);
 
-  useEffect(() => {
-    fetchGateways();
-  }, [currentGateway]);
-
-  const fetchGateways = () => {
+  const refresh = () => {
     setLoading(true);
     fetch('/api/gateways', {
       headers: { Accept: 'application/json' },
@@ -29,79 +25,9 @@ export const useGateways = () => {
       });
   };
 
-  const createGateway = ({
-    name,
-    ipv4Address,
-  }: {
-    name: string;
-    ipv4Address: string;
-  }) => {
-    setLoading(true);
-    fetch('/api/gateways', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name, ipv4Address }),
-    })
-      .then(res => {
-        if (res.ok) {
-          fetchGateways();
-        }
-      })
-      .then(() => setLoading(false))
-      .catch(error => {
-        console.log(error);
-        setError(true);
-        setLoading(false);
-      });
-  };
-
-  const deleteGateway = (serialNumber: string) => {
-    setLoading(true);
-    fetch(`/api/gateways/${serialNumber}`, {
-      method: 'DELETE',
-      headers: { 'Content-Type': 'application/json' },
-    })
-      .then(res => {
-        if (res.ok) {
-          fetchGateways();
-        }
-      })
-      .then(() => setLoading(false))
-      .catch(error => {
-        console.log(error);
-        setError(true);
-        setLoading(false);
-      });
-  };
-
-  const editGateway = ({
-    serialNumber,
-    gateway,
-  }: {
-    serialNumber: string;
-    gateway: Partial<Gateway>;
-  }) => {
-    setLoading(true);
-    fetch(`/api/gateways/${serialNumber}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(gateway),
-    })
-      .then(res => {
-        if (!res.ok) {
-          setError(true);
-          setLoading(false);
-          return;
-        }
-        fetchGateways();
-      })
-      .then(() => setLoading(false))
-      .catch(error => {
-        console.log(error);
-        setError(true);
-        setLoading(false);
-      });
-  };
+  useEffect(() => {
+    refresh();
+  }, [currentGateway]);
 
   const createPeripheral = ({
     serialNumber,
@@ -122,7 +48,7 @@ export const useGateways = () => {
         setGateways(newGateways);
         setCurrentGateway(data);
       })
-      .then(() => fetchGateways())
+      .then(() => refresh())
       .then(() => setLoading(false))
       .catch(error => {
         console.log(error);
@@ -149,7 +75,7 @@ export const useGateways = () => {
         setGateways(newGateways);
         setCurrentGateway(data);
       })
-      .then(() => fetchGateways())
+      .then(() => refresh())
       .then(() => setLoading(false))
       .catch(error => {
         console.log(error);
@@ -179,7 +105,7 @@ export const useGateways = () => {
         setGateways(newGateways);
         setCurrentGateway(data);
       })
-      .then(() => fetchGateways())
+      .then(() => refresh())
       .then(() => setLoading(false))
       .catch(error => {
         console.log(error);
@@ -193,10 +119,8 @@ export const useGateways = () => {
     currentGateway,
     loading,
     error,
+    refresh,
     setCurrentGateway,
-    createGateway,
-    deleteGateway,
-    editGateway,
     createPeripheral,
     deletePeripheral,
     editPeripheral,

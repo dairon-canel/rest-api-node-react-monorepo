@@ -1,6 +1,7 @@
 import classNames from 'classnames';
 import { FC, FormEvent, ReactElement } from 'react';
-import { useGateways, useTableAddAction } from '../hooks';
+import { useTableAddAction } from '../hooks';
+import { useGateway } from '../hooks/useGateway';
 import { Gateway } from '../types';
 import GatewayListItem from './GatewayListItem';
 
@@ -9,14 +10,6 @@ interface IGatewayList {
 }
 
 const GatewayList: FC<IGatewayList> = ({ setModalElement }) => {
-  const {
-    gateways,
-    loading,
-    error,
-    createGateway,
-    deleteGateway,
-    editGateway,
-  } = useGateways();
   const {
     removeAddAction,
     selectedItem,
@@ -28,11 +21,20 @@ const GatewayList: FC<IGatewayList> = ({ setModalElement }) => {
     buttonAddText: 'Add Gateway',
   });
 
-  const sendForm = async (event: FormEvent<HTMLFormElement>) => {
+  const {
+    gateways,
+    isRefetching,
+    isLoading,
+    isError,
+    createGateway,
+    editGateway,
+    deleteGateway,
+  } = useGateway();
+
+  const sendForm = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     const { name, ipv4Address } = event.target as typeof event.target & {
-      serialNumber: { value: string };
       name: { value: string };
       ipv4Address: { value: string };
     };
@@ -42,6 +44,7 @@ const GatewayList: FC<IGatewayList> = ({ setModalElement }) => {
         name: name.value,
         ipv4Address: ipv4Address.value,
       });
+      addButtonState.action();
     } catch (error) {
       alert(`An error has occurred: ${error}`);
     }
@@ -49,7 +52,9 @@ const GatewayList: FC<IGatewayList> = ({ setModalElement }) => {
 
   const handleDelete = () => {
     const serialNumber = (selectedItem as Gateway).serialNumber;
-    if (serialNumber) deleteGateway(serialNumber);
+    if (serialNumber) {
+      deleteGateway(serialNumber);
+    }
     addButtonState.action();
   };
 
@@ -69,6 +74,7 @@ const GatewayList: FC<IGatewayList> = ({ setModalElement }) => {
             ipv4Address?.value || (selectedItem as Gateway).ipv4Address,
         },
       });
+      addButtonState.action();
     } catch (error) {
       alert(`An error has occurred: ${error}`);
     }
@@ -81,12 +87,10 @@ const GatewayList: FC<IGatewayList> = ({ setModalElement }) => {
       </h1>
       <form id="add_gateway_form" onSubmit={event => sendForm(event)}></form>
       <form id="edit_gateway_form" onSubmit={event => handleEdit(event)}></form>
-      {loading ? (
+      {isLoading || isRefetching ? (
         <div>Loading...</div>
-      ) : error ? (
+      ) : isError ? (
         <div>Something happened...</div>
-      ) : !gateways ? (
-        <div>No gateways yet...</div>
       ) : (
         <table className="table">
           <thead>
@@ -143,7 +147,7 @@ const GatewayList: FC<IGatewayList> = ({ setModalElement }) => {
                   type="submit"
                   form="add_gateway_form"
                   className={classNames('btn mt-1 min-h-[2rem] h-[2rem]', {
-                    loading,
+                    isLoading,
                   })}
                 >
                   Add
@@ -158,7 +162,7 @@ const GatewayList: FC<IGatewayList> = ({ setModalElement }) => {
         <button
           className={classNames('btn mt-1 self-end min-h-[2rem] h-[2rem]', {
             hidden: !selectedItem,
-            loading,
+            isLoading,
           })}
           onClick={handleDelete}
         >
@@ -166,7 +170,7 @@ const GatewayList: FC<IGatewayList> = ({ setModalElement }) => {
         </button>
         <button
           className={classNames('btn mt-1 min-h-[2rem] h-[2rem]', {
-            'btn-disabled': loading,
+            'btn-disabled': isLoading,
           })}
           onClick={addButtonState.action}
         >

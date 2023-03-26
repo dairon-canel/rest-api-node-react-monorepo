@@ -1,17 +1,44 @@
-export const addPeripheral = async (serialNumber: string) => {
-  fetch(`/gateways/${serialNumber}/peripherals`, {
+import { Gateway } from '../types';
+
+export const createGatewayService = async ({
+  name,
+  ipv4Address,
+}: {
+  name: string;
+  ipv4Address: string;
+}) => {
+  return fetch('/api/gateways', {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      uid: 1234,
-      vendor: 'Example Vendor',
-      dateCreated: '2023-03-21T12:34:56.789Z',
-      status: 'online',
-    }),
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ name, ipv4Address }),
+  });
+};
+
+export const getGatewaysService = async () => {
+  return fetch('/api/gateways', {
+    headers: { Accept: 'application/json' },
   })
-    .then(response => response.json())
-    .then(data => console.log(data))
-    .catch(error => console.log(error));
+    .then(res => res.json())
+    .then(data => data as Gateway[]);
+};
+
+export const deleteGatewaysService = async (serialNumber: string) => {
+  return fetch(`/api/gateways/${serialNumber}`, {
+    method: 'DELETE',
+    headers: { 'Content-Type': 'application/json' },
+  });
+};
+
+export const editGatewaysService = async ({
+  serialNumber,
+  gateway,
+}: {
+  serialNumber: string;
+  gateway: Partial<Gateway>;
+}) => {
+  return fetch(`/api/gateways/${serialNumber}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(gateway),
+  });
 };
