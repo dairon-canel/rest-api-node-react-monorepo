@@ -7,26 +7,37 @@ export const createGatewayService = async ({
   name: string;
   ipv4Address: string;
 }) => {
-  return fetch('/api/gateways', {
+  const response = await fetch('/api/gateways', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ name, ipv4Address }),
   });
+
+  if (!response.ok) {
+    throw new Error('Error creating Gateway');
+  }
+  return response.json();
 };
 
 export const getGatewaysService = async () => {
-  return fetch('/api/gateways', {
+  const response = await fetch('/api/gateways', {
     headers: { Accept: 'application/json' },
-  })
-    .then(res => res.json())
-    .then(data => data as Gateway[]);
+  });
+  if (!response.ok) {
+    throw new Error('Error retrieving Gateway');
+  }
+  return await response.json();
 };
 
 export const deleteGatewaysService = async (serialNumber: string) => {
-  return fetch(`/api/gateways/${serialNumber}`, {
+  const response = await fetch(`/api/gateways/${serialNumber}`, {
     method: 'DELETE',
     headers: { 'Content-Type': 'application/json' },
   });
+  if (!response.ok) {
+    throw new Error('Error retrieving Gateway');
+  }
+  return await response.json();
 };
 
 export const editGatewaysService = async ({
@@ -36,10 +47,13 @@ export const editGatewaysService = async ({
   serialNumber: string;
   gateway: Partial<Gateway>;
 }) => {
-  console.log(gateway);
-  return fetch(`/api/gateways/${serialNumber}`, {
+  const response = await fetch(`/api/gateways/${serialNumber}`, {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(gateway),
   });
+  if (!response.ok) {
+    throw new Error('Error retrieving Gateway');
+  }
+  return await response.json();
 };

@@ -1,4 +1,5 @@
 import { useMutation, useQuery } from '@tanstack/react-query';
+import { useState } from 'react';
 import {
   createGatewayService,
   deleteGatewaysService,
@@ -8,6 +9,8 @@ import {
 import { Gateway } from '../types';
 
 export const useGateway = () => {
+  const [error, setError] = useState<string>();
+
   const {
     data: gateways,
     refetch,
@@ -24,6 +27,7 @@ export const useGateway = () => {
       return createGatewayService(gateway);
     },
     onSuccess: () => refetch(),
+    onError: (error: any) => setError(error.message),
   });
 
   const { mutate: editGateway } = useMutation({
@@ -40,6 +44,7 @@ export const useGateway = () => {
       });
     },
     onSuccess: () => refetch(),
+    onError: (error: any) => setError(error.message),
   });
 
   const { mutate: deleteGateway } = useMutation({
@@ -47,6 +52,7 @@ export const useGateway = () => {
       return deleteGatewaysService(serialNumber);
     },
     onSuccess: () => refetch(),
+    onError: (error: any) => setError(error.message),
   });
 
   return {
@@ -54,6 +60,7 @@ export const useGateway = () => {
     isRefetching,
     isLoading,
     isError,
+    error,
     createGateway,
     editGateway,
     deleteGateway,

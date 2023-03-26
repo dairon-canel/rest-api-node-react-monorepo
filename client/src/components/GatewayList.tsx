@@ -1,34 +1,21 @@
 import classNames from 'classnames';
 import { useForm } from 'react-hook-form';
-import { FC, FormEvent, ReactElement } from 'react';
+import { FC, FormEvent, ReactElement, useState } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { object, string, TypeOf } from 'zod';
 import { useTableAddAction } from '../hooks';
 import { useGateway } from '../hooks/useGateway';
-import { Gateway } from '../types';
+import {
+  Gateway,
+  createGatewaySchema,
+  CreateGatewayInput,
+  editGatewaySchema,
+  EditGatewayInput,
+} from '../types';
 import GatewayListItem from './GatewayListItem';
 
 interface IGatewayList {
   setModalElement: React.Dispatch<React.SetStateAction<ReactElement | null>>;
 }
-
-const createGatewaySchema = object({
-  name: string().nonempty({
-    message: 'Email is required',
-  }),
-  ipv4Address: string().nonempty({
-    message: 'Password is required',
-  }),
-});
-
-const editGatewaySchema = object({
-  name: string().nonempty({
-    message: 'Email is required',
-  }),
-  ipv4Address: string().nonempty({
-    message: 'Password is required',
-  }),
-});
 
 const GatewayList: FC<IGatewayList> = ({ setModalElement }) => {
   const {
@@ -47,6 +34,7 @@ const GatewayList: FC<IGatewayList> = ({ setModalElement }) => {
     isRefetching,
     isLoading,
     isError,
+    error,
     createGateway,
     editGateway,
     deleteGateway,
@@ -56,23 +44,13 @@ const GatewayList: FC<IGatewayList> = ({ setModalElement }) => {
     register,
     formState: { errors },
     handleSubmit,
-  } = useForm({
-    resolver: zodResolver(createUserSchema),
+  } = useForm<CreateGatewayInput>({
+    resolver: zodResolver(createGatewaySchema),
   });
 
-  const sendForm = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-
-    const { name, ipv4Address } = event.target as typeof event.target & {
-      name: { value: string };
-      ipv4Address: { value: string };
-    };
-
+  const sendForm = (values: CreateGatewayInput) => {
     try {
-      createGateway({
-        name: name.value,
-        ipv4Address: ipv4Address.value,
-      });
+      createGateway(values);
       addButtonState.action();
     } catch (error) {
       alert(`An error has occurred: ${error}`);
@@ -115,7 +93,8 @@ const GatewayList: FC<IGatewayList> = ({ setModalElement }) => {
       <h1 className="text-xl text-base-100 mb-3 font-semibold">
         List of Gateways
       </h1>
-      <form id="add_gateway_form" onSubmit={event => sendForm(event)}></form>
+      {error ? <div>{error}</div> : null}
+      <form id="add_gateway_form" onSubmit={handleSubmit(sendForm)}></form>
       <form id="edit_gateway_form" onSubmit={event => handleEdit(event)}></form>
       {isLoading || isRefetching ? (
         <div>Loading...</div>
@@ -148,27 +127,30 @@ const GatewayList: FC<IGatewayList> = ({ setModalElement }) => {
             <tr className={classNames({ hidden: !addButtonState.enabled })}>
               <td>New Gateway</td>
               <td>
-                <fieldset>
+                <div className="form-element">
                   <input
                     form="add_gateway_form"
                     type="text"
                     id="name"
                     placeholder="Name"
-                    required
                     className="input input-bordered input-sm"
+                    {...register('name')}
                   />
-                </fieldset>
+                  <p>{errors.name?.message}</p>
+                </div>
               </td>
               <td>
-                <fieldset>
+                <div className="form-element">
                   <input
                     form="add_gateway_form"
                     type="text"
                     id="ipv4Address"
                     placeholder="Ipv4 Address"
                     className="input input-bordered input-sm"
+                    {...register('ipv4Address')}
                   />
-                </fieldset>
+                  <p>{errors.ipv4Address?.message}</p>
+                </div>
               </td>
               <td>New Devices</td>
               <td>
