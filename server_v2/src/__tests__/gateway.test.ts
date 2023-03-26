@@ -100,8 +100,6 @@ describe('Gateway', () => {
           .post('/api/gateways')
           .send(gatewayInput);
 
-        console.log('TEST', body);
-
         expect(statusCode).toBe(200);
         expect(body).toEqual(gatewayPayload);
         expect(createGatewayServiceMock).toHaveBeenCalledWith(gatewayInput);

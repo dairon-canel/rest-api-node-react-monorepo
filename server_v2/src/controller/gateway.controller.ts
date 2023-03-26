@@ -19,7 +19,6 @@ export async function createGatewayHandler(
 ) {
   const userId = res.locals.user._id;
   const body = req.body;
-  console.log('ARRIVED', body);
 
   const gateway = await createGateway({ ...body, user: userId });
 
