@@ -26,7 +26,7 @@ export const getGatewaysService = async () => {
   if (!response.ok) {
     throw new Error('Error retrieving Gateway');
   }
-  return await response.json();
+  return (await response.json()) as Promise<Gateway[]>;
 };
 
 export const deleteGatewaysService = async (serialNumber: string) => {
