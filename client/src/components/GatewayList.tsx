@@ -56,15 +56,15 @@ const GatewayList: FC<IGatewayList> = ({ setModalElement }) => {
     resolver: zodResolver(editGatewaySchema),
   });
 
-  const createForm = (values: CreateGatewayInput) => {
-    createGateway(values);
+  const createForm = (gateway: CreateGatewayInput) => {
+    createGateway(gateway);
     addButtonState.action();
   };
 
-  const editForm = async (values: EditGatewayInput) => {
+  const editForm = async (gateway: EditGatewayInput) => {
     editGateway({
       serialNumber: (selectedItem as Gateway).serialNumber,
-      gateway: values,
+      gateway,
     });
     addButtonState.action();
   };

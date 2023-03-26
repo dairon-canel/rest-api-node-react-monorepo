@@ -9,8 +9,8 @@ interface IPeripheralListItemProps {
   peripheral: PeripheralDevice;
   selectedPeripheral: PeripheralDevice | null;
   toggleEditClick: (item: Gateway | PeripheralDevice) => void;
-  networkStatus: 'offline' | 'online';
-  setNetworkStatus: React.Dispatch<React.SetStateAction<'offline' | 'online'>>;
+  networkStatus: 'OFFLINE' | 'ONLINE';
+  setNetworkStatus: React.Dispatch<React.SetStateAction<'OFFLINE' | 'ONLINE'>>;
 }
 
 const PeripheralListItem: FC<IPeripheralListItemProps> = ({
@@ -28,7 +28,7 @@ const PeripheralListItem: FC<IPeripheralListItemProps> = ({
   );
 
   useEffect(() => {
-    setNetworkStatus('offline');
+    setNetworkStatus('OFFLINE');
   }, []);
 
   return (
@@ -49,8 +49,8 @@ const PeripheralListItem: FC<IPeripheralListItemProps> = ({
             </fieldset>
           </td>
           <td>
-            {peripheral.dateCreated
-              ? format(new Date(peripheral.dateCreated), 'yyyy/mm/dd')
+            {peripheral.createdAt
+              ? format(new Date(peripheral.createdAt), 'yyyy/mm/dd')
               : 'Not Available'}
           </td>
           <td>
@@ -58,8 +58,8 @@ const PeripheralListItem: FC<IPeripheralListItemProps> = ({
               type="button"
               className="btn mt-1 min-h-[1.3rem] h-[1.3rem]"
               onClick={() => {
-                if (networkStatus === 'offline') setNetworkStatus('online');
-                if (networkStatus === 'online') setNetworkStatus('offline');
+                if (networkStatus === 'OFFLINE') setNetworkStatus('ONLINE');
+                if (networkStatus === 'ONLINE') setNetworkStatus('OFFLINE');
               }}
             >
               {networkStatus}
@@ -89,8 +89,8 @@ const PeripheralListItem: FC<IPeripheralListItemProps> = ({
           <td>{peripheral.uid}</td>
           <td>{peripheral.vendor}</td>
           <td>
-            {peripheral.dateCreated
-              ? format(new Date(peripheral.dateCreated), 'yyyy/mm/dd')
+            {peripheral.createdAt
+              ? format(new Date(peripheral.createdAt), 'yyyy/mm/dd')
               : 'Not Available'}
           </td>
           <td>{peripheral.status}</td>

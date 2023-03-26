@@ -1,20 +1,20 @@
 import { Gateway, PeripheralDevice } from '../types';
 
 export const createPeripheralService = async ({
-  name,
-  ipv4Address,
+  serialNumber,
+  peripheral,
 }: {
-  name: string;
-  ipv4Address: string;
+  serialNumber: string;
+  peripheral: { status: string; vendor: string };
 }) => {
-  const response = await fetch('/api/gateways', {
+  const response = await fetch(`/api/peripherals/${serialNumber}`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ name, ipv4Address }),
+    body: JSON.stringify({ ...peripheral, gateway_id: serialNumber }),
   });
 
   if (!response.ok) {
-    throw new Error('Error creating Gateway');
+    throw new Error('Error creating peripheral');
   }
   return response.json();
 };

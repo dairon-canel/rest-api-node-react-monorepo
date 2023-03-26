@@ -22,6 +22,7 @@ export async function createPeripheralHandler(
   try {
     const body = req.body;
 
+    console.log(body);
     const { length } = await queryPeripheral({ gateway_id: body.gateway_id });
 
     if (length >= 10) {

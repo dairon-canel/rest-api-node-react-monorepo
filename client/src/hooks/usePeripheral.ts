@@ -4,6 +4,7 @@ import {
   createPeripheralService,
   getPeripheralsByGatewayService,
 } from '../services';
+import { PeripheralDevice } from '../types';
 
 export const usePeripheral = ({ serialNumber }: { serialNumber: string }) => {
   const [error, setError] = useState<string>();
@@ -19,13 +20,19 @@ export const usePeripheral = ({ serialNumber }: { serialNumber: string }) => {
     queryFn: () => getPeripheralsByGatewayService(serialNumber),
   });
 
-  /* const { mutate: createPeripheral } = useMutation({
-    mutationFn: (serialNumber: string) => {
-      return createPeripheralService(serialNumber);
+  const { mutate: createPeripheral } = useMutation({
+    mutationFn: ({
+      serialNumber,
+      peripheral,
+    }: {
+      serialNumber: string;
+      peripheral: { status: string; vendor: string };
+    }) => {
+      return createPeripheralService({ serialNumber, peripheral });
     },
     onSuccess: () => refetch(),
     onError: (error: any) => setError(error.message),
-  }); */
+  });
 
   /* const createPeripheral = ({
     serialNumber,
@@ -112,5 +119,5 @@ export const usePeripheral = ({ serialNumber }: { serialNumber: string }) => {
       });
   }; */
 
-  return { peripherals, isLoading, isError };
+  return { peripherals, isLoading, isError, isRefetching, createPeripheral };
 };

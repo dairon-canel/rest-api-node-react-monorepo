@@ -1,4 +1,4 @@
-import { object, string, TypeOf } from 'zod';
+import { nativeEnum, object, string, TypeOf } from 'zod';
 
 export interface Gateway {
   _id?: string;
@@ -52,3 +52,11 @@ export const editGatewaySchema = object({
 });
 
 export type EditGatewayInput = TypeOf<typeof editGatewaySchema>;
+
+export const createPeripheralSchema = object({
+  vendor: string({
+    required_error: 'Vendor is required',
+  }).min(3, 'Vendor should be at least 3 characters long'),
+});
+
+export type CreatePeripheralInput = TypeOf<typeof createPeripheralSchema>;
