@@ -11,6 +11,17 @@ const payload = {
   }),
 };
 
+const updatePayload = {
+  body: object({
+    name: string({
+      required_error: 'Name is required',
+    }).min(3, 'Name should be at least 3 characters long'),
+    ipv4Address: string()
+      .ip({ version: 'v4', message: 'Invalid IPv4 address' })
+      .optional(),
+  }),
+};
+
 const params = {
   params: object({
     serialNumber: string({
@@ -24,7 +35,7 @@ export const createGatewaySchema = object({
 });
 
 export const updateGatewaySchema = object({
-  ...payload,
+  ...updatePayload,
   ...params,
 });
 

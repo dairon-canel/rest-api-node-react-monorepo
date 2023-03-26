@@ -36,6 +36,7 @@ export const editGatewaysService = async ({
   serialNumber: string;
   gateway: Partial<Gateway>;
 }) => {
+  console.log(gateway);
   return fetch(`/api/gateways/${serialNumber}`, {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },

@@ -31,7 +31,6 @@ const gatewaySchema = new mongoose.Schema(
     },
     ipv4Address: {
       type: String,
-      required: true,
       unique: true,
       validate: {
         validator: function (v: string) {

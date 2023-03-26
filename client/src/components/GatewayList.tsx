@@ -1,5 +1,8 @@
 import classNames from 'classnames';
+import { useForm } from 'react-hook-form';
 import { FC, FormEvent, ReactElement } from 'react';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { object, string, TypeOf } from 'zod';
 import { useTableAddAction } from '../hooks';
 import { useGateway } from '../hooks/useGateway';
 import { Gateway } from '../types';
@@ -8,6 +11,24 @@ import GatewayListItem from './GatewayListItem';
 interface IGatewayList {
   setModalElement: React.Dispatch<React.SetStateAction<ReactElement | null>>;
 }
+
+const createGatewaySchema = object({
+  name: string().nonempty({
+    message: 'Email is required',
+  }),
+  ipv4Address: string().nonempty({
+    message: 'Password is required',
+  }),
+});
+
+const editGatewaySchema = object({
+  name: string().nonempty({
+    message: 'Email is required',
+  }),
+  ipv4Address: string().nonempty({
+    message: 'Password is required',
+  }),
+});
 
 const GatewayList: FC<IGatewayList> = ({ setModalElement }) => {
   const {
@@ -30,6 +51,14 @@ const GatewayList: FC<IGatewayList> = ({ setModalElement }) => {
     editGateway,
     deleteGateway,
   } = useGateway();
+
+  const {
+    register,
+    formState: { errors },
+    handleSubmit,
+  } = useForm({
+    resolver: zodResolver(createUserSchema),
+  });
 
   const sendForm = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -64,8 +93,9 @@ const GatewayList: FC<IGatewayList> = ({ setModalElement }) => {
     try {
       const { name, ipv4Address } = event.target as typeof event.target & {
         name: { value: string };
-        ipv4Address: { value: string };
+        ipv4Address?: { value: string };
       };
+      console.log(name, ipv4Address);
       editGateway({
         serialNumber: (selectedItem as Gateway).serialNumber,
         gateway: {
@@ -136,7 +166,6 @@ const GatewayList: FC<IGatewayList> = ({ setModalElement }) => {
                     type="text"
                     id="ipv4Address"
                     placeholder="Ipv4 Address"
-                    required
                     className="input input-bordered input-sm"
                   />
                 </fieldset>
