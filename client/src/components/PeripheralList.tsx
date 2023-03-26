@@ -1,23 +1,19 @@
-import { FC, FormEvent, useEffect, useState } from 'react';
+import { FC, useState } from 'react';
 import classNames from 'classnames';
 import { format } from 'date-fns';
 import { Gateway, PeripheralDevice } from '../types';
 import PeripheralListItem from './PeripheralListItem';
-import { useGateways, useTableAddAction } from '../hooks';
+import { useTableAddAction } from '../hooks';
+import { usePeripheral } from '../hooks/usePeripheral';
 
 interface IPeripheralListProps {
   gateway: Gateway;
 }
 
 const PeripheralList: FC<IPeripheralListProps> = ({ gateway }) => {
-  const {
-    loading,
-    currentGateway,
-    createPeripheral,
-    deletePeripheral,
-    setCurrentGateway,
-    editPeripheral,
-  } = useGateways();
+  const { peripherals, isLoading, isError } = usePeripheral({
+    serialNumber: gateway.serialNumber,
+  });
   const {
     removeAddAction,
     selectedItem,
@@ -33,11 +29,11 @@ const PeripheralList: FC<IPeripheralListProps> = ({ gateway }) => {
     'offline',
   );
 
-  useEffect(() => {
+  /*  useEffect(() => {
     setCurrentGateway(gateway);
-  }, []);
+  }, []); */
 
-  const addPeripheralForm = async (event: FormEvent<HTMLFormElement>) => {
+  /* const addPeripheralForm = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     const { vendor } = event.target as typeof event.target & {
@@ -53,17 +49,17 @@ const PeripheralList: FC<IPeripheralListProps> = ({ gateway }) => {
     } catch (error) {
       alert(`An error has occurred: ${error}`);
     }
-  };
+  }; */
 
-  const handleDelete = () => {
+  /* const handleDelete = () => {
     deletePeripheral({
       serialNumber: gateway.serialNumber,
       uid: (selectedItem as PeripheralDevice).uid,
     });
     addButtonState.action();
-  };
+  }; */
 
-  const handleEdit = async (event: FormEvent<HTMLFormElement>) => {
+  /* const handleEdit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     try {
@@ -84,12 +80,16 @@ const PeripheralList: FC<IPeripheralListProps> = ({ gateway }) => {
     } catch (error) {
       alert(`An error has occurred: ${error}`);
     }
-  };
+  }; */
 
   return (
     <>
-      {!gateway.peripheralCount ? (
-        <p>No devices</p>
+      {isLoading ? (
+        <div>Loading...</div>
+      ) : isError ? (
+        <div>Something happened...</div>
+      ) : peripherals && peripherals.length === 0 ? (
+        <div>No peripherals yet...</div>
       ) : (
         <div>
           <h3 className="text-lg font-bold mb-1 w-full text-center">
@@ -97,11 +97,15 @@ const PeripheralList: FC<IPeripheralListProps> = ({ gateway }) => {
           </h3>
           <form
             id="add_peripheral_form"
-            onSubmit={event => addPeripheralForm(event)}
+            onSubmit={event => {
+              /* addPeripheralForm(event) */
+            }}
           ></form>
           <form
             id="edit_peripheral_form"
-            onSubmit={event => handleEdit(event)}
+            onSubmit={event => {
+              /* handleEdit(event) */
+            }}
           ></form>
           <table className="table table-compact w-full">
             <thead>
@@ -114,7 +118,7 @@ const PeripheralList: FC<IPeripheralListProps> = ({ gateway }) => {
               </tr>
             </thead>
             <tbody>
-              {currentGateway?.peripheralDevices.map((peripheral, key) => (
+              {peripherals?.map((peripheral, key) => (
                 <tr key={key}>
                   <PeripheralListItem
                     removeAddAction={removeAddAction}
@@ -129,7 +133,7 @@ const PeripheralList: FC<IPeripheralListProps> = ({ gateway }) => {
                 </tr>
               ))}
               <tr className={classNames({ hidden: !addButtonState.enabled })}>
-                <td>{gateway.peripheralDevices.length + 1}</td>
+                <td>Serial number</td>
                 <td>
                   <fieldset>
                     <input
@@ -161,7 +165,7 @@ const PeripheralList: FC<IPeripheralListProps> = ({ gateway }) => {
                     type="submit"
                     form="add_peripheral_form"
                     className={classNames('btn mt-1 min-h-[2rem] h-[2rem]', {
-                      loading,
+                      isLoading,
                     })}
                   >
                     Add
@@ -174,15 +178,15 @@ const PeripheralList: FC<IPeripheralListProps> = ({ gateway }) => {
             <button
               className={classNames('btn mt-1 self-end min-h-[2rem] h-[2rem]', {
                 hidden: !selectedItem,
-                loading,
+                isLoading,
               })}
-              onClick={handleDelete}
+              onClick={() => {} /* handleDelete */}
             >
               Delete
             </button>
             <button
               className={classNames('btn mt-1 min-h-[2rem] h-[2rem]', {
-                'btn-disabled': loading,
+                'btn-disabled': isLoading,
               })}
               onClick={addButtonState.action}
             >

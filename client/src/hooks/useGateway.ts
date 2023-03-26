@@ -1,5 +1,5 @@
 import { useMutation, useQuery } from '@tanstack/react-query';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   createGatewayService,
   deleteGatewaysService,
@@ -10,6 +10,7 @@ import { Gateway } from '../types';
 
 export const useGateway = () => {
   const [error, setError] = useState<string>();
+  const [currentGateway, setCurrentGateway] = useState<Gateway>();
 
   const {
     data: gateways,
@@ -21,6 +22,10 @@ export const useGateway = () => {
     queryKey: ['getGatewayList'],
     queryFn: getGatewaysService,
   });
+
+  useEffect(() => {
+    refetch();
+  }, [currentGateway]);
 
   const { mutate: createGateway } = useMutation({
     mutationFn: (gateway: { name: string; ipv4Address: string }) => {
@@ -57,6 +62,8 @@ export const useGateway = () => {
 
   return {
     gateways,
+    currentGateway,
+    setCurrentGateway,
     isRefetching,
     isLoading,
     isError,
