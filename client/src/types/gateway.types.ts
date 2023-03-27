@@ -9,7 +9,7 @@ export interface Gateway {
 }
 
 export interface PeripheralDevice {
-  uid: number;
+  uid: string;
   vendor: string;
   createdAt?: Date;
   updatedAt?: Date;
@@ -53,10 +53,10 @@ export const editGatewaySchema = object({
 
 export type EditGatewayInput = TypeOf<typeof editGatewaySchema>;
 
-export const createPeripheralSchema = object({
+export const peripheralSchema = object({
   vendor: string({
     required_error: 'Vendor is required',
   }).min(3, 'Vendor should be at least 3 characters long'),
 });
 
-export type CreatePeripheralInput = TypeOf<typeof createPeripheralSchema>;
+export type PeripheralInput = TypeOf<typeof peripheralSchema>;

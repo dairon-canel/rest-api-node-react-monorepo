@@ -1,6 +1,7 @@
 import { format } from 'date-fns';
-import { FC, useEffect, useState } from 'react';
+import { FC, useEffect } from 'react';
 import { useTableItemAddAction } from '../hooks';
+import { UseFormRegister, FieldErrors } from 'react-hook-form';
 import { Gateway, PeripheralDevice } from '../types';
 
 interface IPeripheralListItemProps {
@@ -11,6 +12,12 @@ interface IPeripheralListItemProps {
   toggleEditClick: (item: Gateway | PeripheralDevice) => void;
   networkStatus: 'OFFLINE' | 'ONLINE';
   setNetworkStatus: React.Dispatch<React.SetStateAction<'OFFLINE' | 'ONLINE'>>;
+  editRegister: UseFormRegister<{
+    vendor: string;
+  }>;
+  editFormErrors: FieldErrors<{
+    vendor: string;
+  }>;
 }
 
 const PeripheralListItem: FC<IPeripheralListItemProps> = ({
@@ -21,6 +28,8 @@ const PeripheralListItem: FC<IPeripheralListItemProps> = ({
   toggleEditClick,
   networkStatus,
   setNetworkStatus,
+  editRegister,
+  editFormErrors,
 }) => {
   const { editButtonToggle, handleEditToggle } = useTableItemAddAction(
     removeAddAction,
@@ -37,7 +46,7 @@ const PeripheralListItem: FC<IPeripheralListItemProps> = ({
         <>
           <td>{peripheral.uid}</td>
           <td>
-            <fieldset>
+            <div className="form-element">
               <input
                 form="edit_peripheral_form"
                 type="text"
@@ -45,8 +54,10 @@ const PeripheralListItem: FC<IPeripheralListItemProps> = ({
                 placeholder={selectedPeripheral?.vendor || 'Vendor'}
                 required
                 className="input input-bordered input-sm"
+                {...editRegister('vendor')}
               />
-            </fieldset>
+              <p>{editFormErrors.vendor?.message}</p>
+            </div>
           </td>
           <td>
             {peripheral.createdAt

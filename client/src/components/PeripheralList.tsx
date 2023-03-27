@@ -2,8 +2,8 @@ import { FC, useState } from 'react';
 import classNames from 'classnames';
 import { format } from 'date-fns';
 import {
-  CreatePeripheralInput,
-  createPeripheralSchema,
+  PeripheralInput,
+  peripheralSchema,
   Gateway,
   PeripheralDevice,
 } from '../types';
@@ -25,6 +25,8 @@ const PeripheralList: FC<IPeripheralListProps> = ({ gateway }) => {
     error,
     isRefetching,
     createPeripheral,
+    editPeripheral,
+    deletePeripheral,
   } = usePeripheral({
     serialNumber: gateway.serialNumber,
   });
@@ -47,15 +49,19 @@ const PeripheralList: FC<IPeripheralListProps> = ({ gateway }) => {
     register: createRegister,
     formState: { errors: createFormErrors },
     handleSubmit: handleCreateFormSubmit,
-  } = useForm<CreatePeripheralInput>({
-    resolver: zodResolver(createPeripheralSchema),
+  } = useForm<PeripheralInput>({
+    resolver: zodResolver(peripheralSchema),
   });
 
-  const createForm = (vendor: CreatePeripheralInput) => {
-    console.log({
-      serialNumber: gateway.serialNumber,
-      peripheral: { ...vendor, status: networkStatus },
-    });
+  const {
+    register: editRegister,
+    formState: { errors: editFormErrors },
+    handleSubmit: handleEditFormSubmit,
+  } = useForm<PeripheralInput>({
+    resolver: zodResolver(peripheralSchema),
+  });
+
+  const createForm = (vendor: PeripheralInput) => {
     createPeripheral({
       serialNumber: gateway.serialNumber,
       peripheral: { ...vendor, status: networkStatus },
@@ -63,58 +69,21 @@ const PeripheralList: FC<IPeripheralListProps> = ({ gateway }) => {
     addButtonState.action();
   };
 
-  /*  useEffect(() => {
-    setCurrentGateway(gateway);
-  }, []); */
-
-  /* const createForm = async (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-
-    const { vendor } = event.target as typeof event.target & {
-      vendor: { value: string };
-    };
-
-    try {
-      createPeripheral({
-        gateway_id: gateway.serialNumber,
-        vendor: vendor.value,
-        status: networkStatus,
-      });
-    } catch (error) {
-      alert(`An error has occurred: ${error}`);
-    }
-  }; */
-
-  /* const handleDelete = () => {
-    deletePeripheral({
-      serialNumber: gateway.serialNumber,
+  const editForm = async (vendor: PeripheralInput) => {
+    editPeripheral({
       uid: (selectedItem as PeripheralDevice).uid,
+      peripheral: { ...vendor, status: networkStatus },
     });
     addButtonState.action();
-  }; */
+  };
 
-  /* const handleEdit = async (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-
-    try {
-      const { vendor } = event.target as typeof event.target & {
-        vendor: { value: string };
-      };
-
-      if (currentGateway?.serialNumber)
-        editPeripheral({
-          serialNumber: currentGateway?.serialNumber,
-          uid: (selectedItem as PeripheralDevice).uid,
-          peripheral: {
-            uid: (selectedItem as PeripheralDevice).uid,
-            vendor: vendor.value,
-            status: networkStatus,
-          },
-        });
-    } catch (error) {
-      alert(`An error has occurred: ${error}`);
+  const handleDelete = () => {
+    const uid = (selectedItem as PeripheralDevice).uid;
+    if (uid) {
+      deletePeripheral(uid);
     }
-  }; */
+    addButtonState.action();
+  };
 
   return (
     <>
@@ -134,9 +103,7 @@ const PeripheralList: FC<IPeripheralListProps> = ({ gateway }) => {
           ></form>
           <form
             id="edit_peripheral_form"
-            onSubmit={event => {
-              /* handleEdit(event) */
-            }}
+            onSubmit={handleEditFormSubmit(editForm)}
           ></form>
           <table className="table table-compact w-full">
             <thead>
@@ -163,6 +130,8 @@ const PeripheralList: FC<IPeripheralListProps> = ({ gateway }) => {
                         toggleEditClick={toggleEditClick}
                         networkStatus={networkStatus}
                         setNetworkStatus={setNetworkStatus}
+                        editRegister={editRegister}
+                        editFormErrors={editFormErrors}
                       />
                     </tr>
                   ))
@@ -217,7 +186,7 @@ const PeripheralList: FC<IPeripheralListProps> = ({ gateway }) => {
                 hidden: !selectedItem,
                 isLoading,
               })}
-              onClick={() => {} /* handleDelete */}
+              onClick={handleDelete}
             >
               Delete
             </button>
