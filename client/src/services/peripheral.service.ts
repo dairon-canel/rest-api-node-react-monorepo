@@ -44,7 +44,7 @@ export const updatePeripheralService = async ({
   peripheral,
 }: {
   uid: string;
-  peripheral: Partial<PeripheralDevice>;
+  peripheral: { status: string; vendor: string };
 }) => {
   console.log(peripheral);
   const response = await fetch(`/api/peripherals/${uid}`, {
