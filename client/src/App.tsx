@@ -9,7 +9,7 @@ function App() {
   const [modalElement, setModalElement] = useState<ReactElement | null>(null);
   return (
     <QueryClientProvider client={queryClient}>
-      <div className="h-screen grid grid-rows-[auto_1fr] relative bg-slate-500">
+      <div className="h-screen grid grid-rows-[auto_1fr] relative bg-base-content">
         <h1 className="text-center text-3xl py-8 font-extrabold text-base-100 self-center">
           Gateway Master
         </h1>

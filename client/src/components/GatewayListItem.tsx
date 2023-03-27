@@ -49,11 +49,10 @@ const GatewayListItem: FC<IGatewayListItemProps> = ({
                 type="text"
                 id="name"
                 placeholder={selectedGateway?.name || 'Name'}
-                required
-                className="input input-bordered input-sm"
+                className="input input-bordered input-sm w-32"
                 {...editRegister('name')}
               />
-              <p>{editFormErrors.name?.message}</p>
+              {/* <p>{editFormErrors.name?.message}</p> */}
             </div>
           </td>
           <td>
@@ -63,10 +62,10 @@ const GatewayListItem: FC<IGatewayListItemProps> = ({
                 type="text"
                 id="ipv4Address"
                 placeholder={selectedGateway?.ipv4Address || 'IPv4 Address'}
-                className="input input-bordered input-sm"
+                className="input input-bordered input-sm w-32"
                 {...editRegister('ipv4Address')}
               />
-              <p>{editFormErrors.ipv4Address?.message}</p>
+              {/* <p>{editFormErrors.ipv4Address?.message}</p> */}
             </fieldset>
           </td>
           <td>
@@ -79,8 +78,8 @@ const GatewayListItem: FC<IGatewayListItemProps> = ({
                     ? '1 Peripheral Device'
                     : `${gateway.peripheralCount} Peripheral Devices`}
                 </p>
-                <div className="dropdown dropdown-left ml-4">
-                  <label className="btn btn-disabled m-1 min-h-[2rem] h-[2rem]">
+                <div className="dropdown dropdown-left">
+                  <label className="btn btn-disabled m-1 ml-10 min-h-[2rem] h-[2rem]">
                     Details
                   </label>
                 </div>
@@ -120,7 +119,7 @@ const GatewayListItem: FC<IGatewayListItemProps> = ({
               </p>
               <label
                 htmlFor="modal_details"
-                className={classNames('btn m-1 min-h-[2rem] h-[2rem]', {
+                className={classNames('btn m-1 ml-10 min-h-[2rem] h-[2rem]', {
                   'btn-disabled': selectedGateway !== null || addAction,
                 })}
                 onClick={() =>

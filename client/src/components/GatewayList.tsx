@@ -78,8 +78,8 @@ const GatewayList: FC<IGatewayList> = ({ setModalElement }) => {
   };
 
   return (
-    <div className="overflow-x-auto flex flex-col items-center px-4 py-4 border-t border-base-300">
-      <h1 className="text-xl text-base-100 mb-3 font-semibold">
+    <div className="overflow-x-auto flex flex-col items-start  px-4 py-4 border-t border-base-300">
+      <h1 className="text-xl self-stretch text-center text-base-100 justify-self-center mb-3 font-semibold">
         List of Gateways
       </h1>
       {error ? <div>{error}</div> : null}
@@ -96,95 +96,101 @@ const GatewayList: FC<IGatewayList> = ({ setModalElement }) => {
       ) : isError ? (
         <div>Something happened...</div>
       ) : (
-        <table className="table">
-          <thead>
-            <tr>
-              <th>Serial Number</th>
-              <th>Name</th>
-              <th>IP Address</th>
-              <th>Peripherals</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {gateways?.map((gateway, key) => (
-              <tr key={key}>
-                <GatewayListItem
-                  removeAddAction={removeAddAction}
-                  gateway={gateway}
-                  selectedGateway={selectedItem as Gateway | null}
-                  addAction={addAction}
-                  setModalElement={setModalElement}
-                  toggleEditClick={toggleEditClick}
-                  editRegister={editRegister}
-                  editFormErrors={editFormErrors}
-                />
+        <div className="self-center">
+          <table className="table table-fixed w-[80rem]">
+            <thead className="w-full">
+              <tr>
+                <th className="px-4 py-2 w-32">Serial Number</th>
+                <th className="px-4 py-2 w-52">Name</th>
+                <th className="px-4 py-2 w-52">IP Address</th>
+                <th className="px-4 py-2 w-auto">Peripherals</th>
+                <th className="px-4 py-2 w-32">Actions</th>
               </tr>
-            ))}
-            <tr className={classNames({ hidden: !addButtonState.enabled })}>
-              <td>New Gateway</td>
-              <td>
-                <div className="form-element">
-                  <input
-                    form="add_gateway_form"
-                    type="text"
-                    id="name"
-                    placeholder="Name"
-                    className="input input-bordered input-sm"
-                    {...createRegister('name')}
-                  />
-                  <p>{createFormErrors.name?.message}</p>
-                </div>
-              </td>
-              <td>
-                <div className="form-element">
-                  <input
-                    form="add_gateway_form"
-                    type="text"
-                    id="ipv4Address"
-                    placeholder="Ipv4 Address"
-                    className="input input-bordered input-sm"
-                    {...createRegister('ipv4Address')}
-                  />
-                  <p>{createFormErrors.ipv4Address?.message}</p>
-                </div>
-              </td>
-              <td>New Devices</td>
-              <td>
-                <button
-                  type="submit"
-                  form="add_gateway_form"
-                  className={classNames('btn mt-1 min-h-[2rem] h-[2rem]', {
-                    isLoading,
-                  })}
+            </thead>
+            <tbody className="text-left">
+              {gateways?.map((gateway, key) => (
+                <tr
+                  className="[&>td]:px-4 [&>td]:py-2 [&>td]:font-medium"
+                  key={key}
                 >
-                  Add
-                </button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+                  <GatewayListItem
+                    removeAddAction={removeAddAction}
+                    gateway={gateway}
+                    selectedGateway={selectedItem as Gateway | null}
+                    addAction={addAction}
+                    setModalElement={setModalElement}
+                    toggleEditClick={toggleEditClick}
+                    editRegister={editRegister}
+                    editFormErrors={editFormErrors}
+                  />
+                </tr>
+              ))}
+              <tr className={classNames({ hidden: !addButtonState.enabled })}>
+                <td className="px-4 py-2 font-medium">New Gateway</td>
+                <td className="px-4 py-2 font-medium">
+                  <div className="form-element">
+                    <input
+                      form="add_gateway_form"
+                      type="text"
+                      id="name"
+                      placeholder="Name"
+                      className="input input-bordered input-sm w-32"
+                      {...createRegister('name')}
+                    />
+                    <p>{createFormErrors.name?.message}</p>
+                  </div>
+                </td>
+                <td className="px-4 py-2 font-medium">
+                  <div className="form-element">
+                    <input
+                      form="add_gateway_form"
+                      type="text"
+                      id="ipv4Address"
+                      placeholder="Ipv4 Address"
+                      className="input input-bordered input-sm w-32"
+                      {...createRegister('ipv4Address')}
+                    />
+                    <p>{createFormErrors.ipv4Address?.message}</p>
+                  </div>
+                </td>
+                <td className="px-4 py-2 text-start font-medium">
+                  New Devices
+                </td>
+                <td className="px-4 py-2 font-medium">
+                  <button
+                    type="submit"
+                    form="add_gateway_form"
+                    className={classNames('btn mt-1 min-h-[2rem] h-[2rem]', {
+                      isLoading,
+                    })}
+                  >
+                    Add
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <div className="grid grid-flow-col gap-48">
+            <button
+              className={classNames('btn mt-1 self-end min-h-[2rem] h-[2rem]', {
+                hidden: !selectedItem,
+                isLoading,
+              })}
+              onClick={handleDelete}
+            >
+              Delete
+            </button>
+            <button
+              className={classNames('btn mt-1 min-h-[2rem] h-[2rem]', {
+                'btn-disabled': isLoading,
+              })}
+              onClick={addButtonState.action}
+            >
+              {addButtonState.buttonText}
+            </button>
+          </div>
+        </div>
       )}
-
-      <div className="grid grid-flow-col gap-48">
-        <button
-          className={classNames('btn mt-1 self-end min-h-[2rem] h-[2rem]', {
-            hidden: !selectedItem,
-            isLoading,
-          })}
-          onClick={handleDelete}
-        >
-          Delete
-        </button>
-        <button
-          className={classNames('btn mt-1 min-h-[2rem] h-[2rem]', {
-            'btn-disabled': isLoading,
-          })}
-          onClick={addButtonState.action}
-        >
-          {addButtonState.buttonText}
-        </button>
-      </div>
     </div>
   );
 };

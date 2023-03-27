@@ -23,7 +23,11 @@ const Modal: FC<IModalProps> = ({ children, modalKey, onClose }) => {
         htmlFor={modalKey}
         className="modal cursor-pointer modal-bottom sm:modal-middle"
       >
-        <label className="modal-box relative" htmlFor="">
+        <label
+          style={{ maxWidth: '50rem' }}
+          className="modal-box w-full relative"
+          htmlFor=""
+        >
           {children}
         </label>
       </label>

@@ -105,22 +105,25 @@ const PeripheralList: FC<IPeripheralListProps> = ({ gateway }) => {
             id="edit_peripheral_form"
             onSubmit={handleEditFormSubmit(editForm)}
           ></form>
-          <table className="table table-compact w-full">
+          <table className="table w-full table-fixed">
             <thead>
               <tr>
-                <th>uid</th>
-                <th>vendor</th>
-                <th>dateCreated</th>
-                <th>status</th>
-                <th>Actions</th>
+                <th className="px-4 py-2 w-24">uid</th>
+                <th className="px-4 py-2 w-32">vendor</th>
+                <th className="px-4 py-2 w-32">dateCreated</th>
+                <th className="px-4 py-2 w-32">status</th>
+                <th className="px-4 py-2 w-32">Actions</th>
               </tr>
             </thead>
-            <tbody>
+            <tbody className="text-left">
               {isLoading || isRefetching
                 ? null
                 : peripherals && peripherals?.length >= 0
                 ? peripherals?.map((peripheral, key) => (
-                    <tr key={key}>
+                    <tr
+                      className="[&>td]:px-4 [&>td]:py-2 [&>td]:font-medium"
+                      key={key}
+                    >
                       <PeripheralListItem
                         removeAddAction={removeAddAction}
                         key={key}
@@ -136,8 +139,13 @@ const PeripheralList: FC<IPeripheralListProps> = ({ gateway }) => {
                     </tr>
                   ))
                 : null}
-              <tr className={classNames({ hidden: !addButtonState.enabled })}>
-                <td>Serial number</td>
+              <tr
+                className={classNames(
+                  ' [&>td]:px-4 [&>td]:py-2 [&>td]:font-medium',
+                  { hidden: !addButtonState.enabled },
+                )}
+              >
+                <td>New serial</td>
                 <td>
                   <div className="form-element">
                     <input
@@ -145,7 +153,7 @@ const PeripheralList: FC<IPeripheralListProps> = ({ gateway }) => {
                       type="text"
                       id="vendor"
                       placeholder="Vendor"
-                      className="input input-bordered input-sm"
+                      className="input input-bordered input-sm w-32"
                       {...createRegister('vendor')}
                     />
                     <p>{createFormErrors.vendor?.message}</p>

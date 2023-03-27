@@ -52,11 +52,10 @@ const PeripheralListItem: FC<IPeripheralListItemProps> = ({
                 type="text"
                 id="vendor"
                 placeholder={selectedPeripheral?.vendor || 'Vendor'}
-                required
-                className="input input-bordered input-sm"
+                className="input input-bordered input-sm w-32"
                 {...editRegister('vendor')}
               />
-              <p>{editFormErrors.vendor?.message}</p>
+              {/* <p>{editFormErrors.vendor?.message}</p> */}
             </div>
           </td>
           <td>
