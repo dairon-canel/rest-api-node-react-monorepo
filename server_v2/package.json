@@ -4,7 +4,7 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "dev": "ts-node-dev --respawn --transpile-only src/app.ts",
+    "dev": "set NODE_ENV=test&&ts-node-dev --respawn --transpile-only src/app.ts",
     "build": "tsc",
     "test": "jest --detectOpenHandles --watchAll --no-cache"
   },
