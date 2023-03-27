@@ -1,9 +1,17 @@
-import { FC, FormEvent, useEffect, useState } from 'react';
+import { FC, useState } from 'react';
 import classNames from 'classnames';
 import { format } from 'date-fns';
-import { Gateway, PeripheralDevice } from '../types';
+import {
+  PeripheralInput,
+  peripheralSchema,
+  Gateway,
+  PeripheralDevice,
+} from '../types';
+import { useForm } from 'react-hook-form';
 import PeripheralListItem from './PeripheralListItem';
-import { useGateways, useTableAddAction } from '../hooks';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useTableAddAction } from '../hooks';
+import { usePeripheral } from '../hooks/usePeripheral';
 
 interface IPeripheralListProps {
   gateway: Gateway;
@@ -11,13 +19,17 @@ interface IPeripheralListProps {
 
 const PeripheralList: FC<IPeripheralListProps> = ({ gateway }) => {
   const {
-    loading,
-    currentGateway,
+    peripherals,
+    isLoading,
+    isError,
+    error,
+    isRefetching,
     createPeripheral,
-    deletePeripheral,
-    setCurrentGateway,
     editPeripheral,
-  } = useGateways();
+    deletePeripheral,
+  } = usePeripheral({
+    serialNumber: gateway.serialNumber,
+  });
   const {
     removeAddAction,
     selectedItem,
@@ -29,120 +41,123 @@ const PeripheralList: FC<IPeripheralListProps> = ({ gateway }) => {
     buttonAddText: 'Add Peripheral Device',
   });
 
-  const [networkStatus, setNetworkStatus] = useState<'offline' | 'online'>(
-    'offline',
+  const [networkStatus, setNetworkStatus] = useState<'OFFLINE' | 'ONLINE'>(
+    'OFFLINE',
   );
 
-  useEffect(() => {
-    setCurrentGateway(gateway);
-  }, []);
+  const {
+    register: createRegister,
+    formState: { errors: createFormErrors },
+    handleSubmit: handleCreateFormSubmit,
+  } = useForm<PeripheralInput>({
+    resolver: zodResolver(peripheralSchema),
+  });
 
-  const addPeripheralForm = async (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
+  const {
+    register: editRegister,
+    formState: { errors: editFormErrors },
+    handleSubmit: handleEditFormSubmit,
+  } = useForm<PeripheralInput>({
+    resolver: zodResolver(peripheralSchema),
+  });
 
-    const { vendor } = event.target as typeof event.target & {
-      vendor: { value: string };
-    };
-
-    try {
-      createPeripheral({
-        serialNumber: gateway.serialNumber,
-        peripheral: {
-          uid: gateway.peripheralDevices.length + 1,
-          vendor: vendor.value,
-          status: networkStatus,
-        },
-      });
-    } catch (error) {
-      alert(`An error has occurred: ${error}`);
-    }
-  };
-
-  const handleDelete = () => {
-    deletePeripheral({
+  const createForm = (vendor: PeripheralInput) => {
+    createPeripheral({
       serialNumber: gateway.serialNumber,
-      uid: (selectedItem as PeripheralDevice).uid,
+      peripheral: { ...vendor, status: networkStatus },
     });
     addButtonState.action();
   };
 
-  const handleEdit = async (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
+  const editForm = async (vendor: PeripheralInput) => {
+    editPeripheral({
+      uid: (selectedItem as PeripheralDevice).uid,
+      peripheral: { ...vendor, status: networkStatus },
+    });
+    addButtonState.action();
+  };
 
-    try {
-      const { vendor } = event.target as typeof event.target & {
-        vendor: { value: string };
-      };
-
-      if (currentGateway?.serialNumber)
-        editPeripheral({
-          serialNumber: currentGateway?.serialNumber,
-          uid: (selectedItem as PeripheralDevice).uid,
-          peripheral: {
-            uid: (selectedItem as PeripheralDevice).uid,
-            vendor: vendor.value,
-            status: networkStatus,
-          },
-        });
-    } catch (error) {
-      alert(`An error has occurred: ${error}`);
+  const handleDelete = () => {
+    const uid = (selectedItem as PeripheralDevice).uid;
+    if (uid) {
+      deletePeripheral(uid);
     }
+    addButtonState.action();
   };
 
   return (
     <>
-      {!gateway.peripheralDevices ? (
-        <p>No devices</p>
+      {isLoading ? (
+        <div>Loading...</div>
+      ) : isError ? (
+        <div>Something happened...</div>
       ) : (
         <div>
           <h3 className="text-lg font-bold mb-1 w-full text-center">
             {gateway.name}
           </h3>
+          {error ? <div>{error}</div> : null}
           <form
             id="add_peripheral_form"
-            onSubmit={event => addPeripheralForm(event)}
+            onSubmit={handleCreateFormSubmit(createForm)}
           ></form>
           <form
             id="edit_peripheral_form"
-            onSubmit={event => handleEdit(event)}
+            onSubmit={handleEditFormSubmit(editForm)}
           ></form>
-          <table className="table table-compact w-full">
+          <table className="table w-full table-fixed">
             <thead>
               <tr>
-                <th>uid</th>
-                <th>vendor</th>
-                <th>dateCreated</th>
-                <th>status</th>
-                <th>Actions</th>
+                <th className="px-4 py-2 w-24">uid</th>
+                <th className="px-4 py-2 w-32">vendor</th>
+                <th className="px-4 py-2 w-32">dateCreated</th>
+                <th className="px-4 py-2 w-32">status</th>
+                <th className="px-4 py-2 w-32">Actions</th>
               </tr>
             </thead>
-            <tbody>
-              {currentGateway?.peripheralDevices.map((peripheral, key) => (
-                <tr key={key}>
-                  <PeripheralListItem
-                    removeAddAction={removeAddAction}
-                    key={key}
-                    peripheral={peripheral}
-                    selectedPeripheral={selectedItem as PeripheralDevice}
-                    addAction={addAction}
-                    toggleEditClick={toggleEditClick}
-                    networkStatus={networkStatus}
-                    setNetworkStatus={setNetworkStatus}
-                  />
-                </tr>
-              ))}
-              <tr className={classNames({ hidden: !addButtonState.enabled })}>
-                <td>{gateway.peripheralDevices.length + 1}</td>
+            <tbody className="text-left">
+              {isLoading || isRefetching
+                ? null
+                : peripherals && peripherals?.length >= 0
+                ? peripherals?.map((peripheral, key) => (
+                    <tr
+                      className="[&>td]:px-4 [&>td]:py-2 [&>td]:font-medium"
+                      key={key}
+                    >
+                      <PeripheralListItem
+                        removeAddAction={removeAddAction}
+                        key={key}
+                        peripheral={peripheral}
+                        selectedPeripheral={selectedItem as PeripheralDevice}
+                        addAction={addAction}
+                        toggleEditClick={toggleEditClick}
+                        networkStatus={networkStatus}
+                        setNetworkStatus={setNetworkStatus}
+                        editRegister={editRegister}
+                        editFormErrors={editFormErrors}
+                      />
+                    </tr>
+                  ))
+                : null}
+              <tr
+                className={classNames(
+                  ' [&>td]:px-4 [&>td]:py-2 [&>td]:font-medium',
+                  { hidden: !addButtonState.enabled },
+                )}
+              >
+                <td>New serial</td>
                 <td>
-                  <fieldset>
+                  <div className="form-element">
                     <input
                       form="add_peripheral_form"
                       type="text"
                       id="vendor"
                       placeholder="Vendor"
-                      className="input input-bordered input-sm"
+                      className="input input-bordered input-sm w-32"
+                      {...createRegister('vendor')}
                     />
-                  </fieldset>
+                    <p>{createFormErrors.vendor?.message}</p>
+                  </div>
                 </td>
                 <td>{format(new Date(), 'yyyy/mm/dd')}</td>
                 <td>
@@ -150,10 +165,10 @@ const PeripheralList: FC<IPeripheralListProps> = ({ gateway }) => {
                     type="button"
                     className="btn mt-1 min-h-[1.3rem] h-[1.3rem]"
                     onClick={() => {
-                      if (networkStatus === 'offline')
-                        setNetworkStatus('online');
-                      if (networkStatus === 'online')
-                        setNetworkStatus('offline');
+                      if (networkStatus === 'OFFLINE')
+                        setNetworkStatus('ONLINE');
+                      if (networkStatus === 'ONLINE')
+                        setNetworkStatus('OFFLINE');
                     }}
                   >
                     {networkStatus}
@@ -164,7 +179,7 @@ const PeripheralList: FC<IPeripheralListProps> = ({ gateway }) => {
                     type="submit"
                     form="add_peripheral_form"
                     className={classNames('btn mt-1 min-h-[2rem] h-[2rem]', {
-                      loading,
+                      isLoading,
                     })}
                   >
                     Add
@@ -177,7 +192,7 @@ const PeripheralList: FC<IPeripheralListProps> = ({ gateway }) => {
             <button
               className={classNames('btn mt-1 self-end min-h-[2rem] h-[2rem]', {
                 hidden: !selectedItem,
-                loading,
+                isLoading,
               })}
               onClick={handleDelete}
             >
@@ -185,7 +200,7 @@ const PeripheralList: FC<IPeripheralListProps> = ({ gateway }) => {
             </button>
             <button
               className={classNames('btn mt-1 min-h-[2rem] h-[2rem]', {
-                'btn-disabled': loading,
+                'btn-disabled': isLoading,
               })}
               onClick={addButtonState.action}
             >

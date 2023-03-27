@@ -1,6 +1,7 @@
 import { format } from 'date-fns';
-import { FC, useEffect, useState } from 'react';
+import { FC, useEffect } from 'react';
 import { useTableItemAddAction } from '../hooks';
+import { UseFormRegister, FieldErrors } from 'react-hook-form';
 import { Gateway, PeripheralDevice } from '../types';
 
 interface IPeripheralListItemProps {
@@ -9,8 +10,14 @@ interface IPeripheralListItemProps {
   peripheral: PeripheralDevice;
   selectedPeripheral: PeripheralDevice | null;
   toggleEditClick: (item: Gateway | PeripheralDevice) => void;
-  networkStatus: 'offline' | 'online';
-  setNetworkStatus: React.Dispatch<React.SetStateAction<'offline' | 'online'>>;
+  networkStatus: 'OFFLINE' | 'ONLINE';
+  setNetworkStatus: React.Dispatch<React.SetStateAction<'OFFLINE' | 'ONLINE'>>;
+  editRegister: UseFormRegister<{
+    vendor: string;
+  }>;
+  editFormErrors: FieldErrors<{
+    vendor: string;
+  }>;
 }
 
 const PeripheralListItem: FC<IPeripheralListItemProps> = ({
@@ -21,6 +28,8 @@ const PeripheralListItem: FC<IPeripheralListItemProps> = ({
   toggleEditClick,
   networkStatus,
   setNetworkStatus,
+  editRegister,
+  editFormErrors,
 }) => {
   const { editButtonToggle, handleEditToggle } = useTableItemAddAction(
     removeAddAction,
@@ -28,7 +37,7 @@ const PeripheralListItem: FC<IPeripheralListItemProps> = ({
   );
 
   useEffect(() => {
-    setNetworkStatus('offline');
+    setNetworkStatus('OFFLINE');
   }, []);
 
   return (
@@ -37,20 +46,21 @@ const PeripheralListItem: FC<IPeripheralListItemProps> = ({
         <>
           <td>{peripheral.uid}</td>
           <td>
-            <fieldset>
+            <div className="form-element">
               <input
                 form="edit_peripheral_form"
                 type="text"
                 id="vendor"
                 placeholder={selectedPeripheral?.vendor || 'Vendor'}
-                required
-                className="input input-bordered input-sm"
+                className="input input-bordered input-sm w-32"
+                {...editRegister('vendor')}
               />
-            </fieldset>
+              {/* <p>{editFormErrors.vendor?.message}</p> */}
+            </div>
           </td>
           <td>
-            {peripheral.dateCreated
-              ? format(new Date(peripheral.dateCreated), 'yyyy/mm/dd')
+            {peripheral.createdAt
+              ? format(new Date(peripheral.createdAt), 'yyyy/mm/dd')
               : 'Not Available'}
           </td>
           <td>
@@ -58,8 +68,8 @@ const PeripheralListItem: FC<IPeripheralListItemProps> = ({
               type="button"
               className="btn mt-1 min-h-[1.3rem] h-[1.3rem]"
               onClick={() => {
-                if (networkStatus === 'offline') setNetworkStatus('online');
-                if (networkStatus === 'online') setNetworkStatus('offline');
+                if (networkStatus === 'OFFLINE') setNetworkStatus('ONLINE');
+                if (networkStatus === 'ONLINE') setNetworkStatus('OFFLINE');
               }}
             >
               {networkStatus}
@@ -89,8 +99,8 @@ const PeripheralListItem: FC<IPeripheralListItemProps> = ({
           <td>{peripheral.uid}</td>
           <td>{peripheral.vendor}</td>
           <td>
-            {peripheral.dateCreated
-              ? format(new Date(peripheral.dateCreated), 'yyyy/mm/dd')
+            {peripheral.createdAt
+              ? format(new Date(peripheral.createdAt), 'yyyy/mm/dd')
               : 'Not Available'}
           </td>
           <td>{peripheral.status}</td>

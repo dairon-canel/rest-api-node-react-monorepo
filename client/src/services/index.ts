@@ -1,1 +1,2 @@
-export * from './gateways';
+export * from './gateways.service';
+export * from './peripheral.service';

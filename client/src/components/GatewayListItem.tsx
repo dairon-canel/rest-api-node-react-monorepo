@@ -1,5 +1,6 @@
 import classNames from 'classnames';
 import { FC, ReactElement } from 'react';
+import { UseFormRegister, FieldErrors } from 'react-hook-form';
 import { useTableItemAddAction } from '../hooks';
 import { Gateway, PeripheralDevice } from '../types';
 import PeripheralList from './PeripheralList';
@@ -11,6 +12,14 @@ interface IGatewayListItemProps {
   setModalElement: React.Dispatch<React.SetStateAction<ReactElement | null>>;
   selectedGateway: Gateway | null;
   toggleEditClick: (item: Gateway | PeripheralDevice) => void;
+  editRegister: UseFormRegister<{
+    name: string;
+    ipv4Address?: string | undefined;
+  }>;
+  editFormErrors: FieldErrors<{
+    name: string;
+    ipv4Address?: string | undefined;
+  }>;
 }
 
 const GatewayListItem: FC<IGatewayListItemProps> = ({
@@ -20,6 +29,8 @@ const GatewayListItem: FC<IGatewayListItemProps> = ({
   setModalElement,
   selectedGateway,
   toggleEditClick,
+  editRegister,
+  editFormErrors,
 }) => {
   const { editButtonToggle, handleEditToggle } = useTableItemAddAction(
     removeAddAction,
@@ -32,16 +43,17 @@ const GatewayListItem: FC<IGatewayListItemProps> = ({
         <>
           <td>{gateway.serialNumber}</td>
           <td>
-            <fieldset>
+            <div className="form-element">
               <input
                 form="edit_gateway_form"
                 type="text"
                 id="name"
                 placeholder={selectedGateway?.name || 'Name'}
-                required
-                className="input input-bordered input-sm"
+                className="input input-bordered input-sm w-32"
+                {...editRegister('name')}
               />
-            </fieldset>
+              {/* <p>{editFormErrors.name?.message}</p> */}
+            </div>
           </td>
           <td>
             <fieldset>
@@ -50,23 +62,24 @@ const GatewayListItem: FC<IGatewayListItemProps> = ({
                 type="text"
                 id="ipv4Address"
                 placeholder={selectedGateway?.ipv4Address || 'IPv4 Address'}
-                required
-                className="input input-bordered input-sm"
+                className="input input-bordered input-sm w-32"
+                {...editRegister('ipv4Address')}
               />
+              {/* <p>{editFormErrors.ipv4Address?.message}</p> */}
             </fieldset>
           </td>
           <td>
-            {!gateway.peripheralDevices ? (
+            {!gateway.peripheralCount ? (
               <p>No devices</p>
             ) : (
               <div className="grid grid-flow-col items-center justify-start">
                 <p>
-                  {gateway.peripheralDevices.length === 1
+                  {gateway.peripheralCount === 1
                     ? '1 Peripheral Device'
-                    : `${gateway.peripheralDevices.length} Peripheral Devices`}
+                    : `${gateway.peripheralCount} Peripheral Devices`}
                 </p>
-                <div className="dropdown dropdown-left ml-4">
-                  <label className="btn btn-disabled m-1 min-h-[2rem] h-[2rem]">
+                <div className="dropdown dropdown-left">
+                  <label className="btn btn-disabled m-1 ml-10 min-h-[2rem] h-[2rem]">
                     Details
                   </label>
                 </div>
@@ -100,13 +113,13 @@ const GatewayListItem: FC<IGatewayListItemProps> = ({
           <td>
             <div className="grid grid-flow-col items-center justify-start">
               <p>
-                {gateway.peripheralDevices.length === 1
+                {gateway.peripheralCount === 1
                   ? '1 Peripheral Device'
-                  : `${gateway.peripheralDevices.length} Peripheral Devices`}
+                  : `${gateway.peripheralCount} Peripheral Devices`}
               </p>
               <label
                 htmlFor="modal_details"
-                className={classNames('btn m-1 min-h-[2rem] h-[2rem]', {
+                className={classNames('btn m-1 ml-10 min-h-[2rem] h-[2rem]', {
                   'btn-disabled': selectedGateway !== null || addAction,
                 })}
                 onClick={() =>
