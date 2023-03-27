@@ -27,7 +27,7 @@ export const usePeripheral = ({ serialNumber }: { serialNumber: string }) => {
       peripheral,
     }: {
       serialNumber: string;
-      peripheral: { status: string; vendor: string };
+      peripheral: { status: 'ONLINE' | 'OFFLINE'; vendor: string };
     }) => {
       return createPeripheralService({ serialNumber, peripheral });
     },
@@ -41,7 +41,7 @@ export const usePeripheral = ({ serialNumber }: { serialNumber: string }) => {
       peripheral,
     }: {
       uid: string;
-      peripheral: { status: string; vendor: string };
+      peripheral: { status: 'ONLINE' | 'OFFLINE'; vendor: string };
     }) => {
       return updatePeripheralService({
         uid,

@@ -5,7 +5,7 @@ export const createPeripheralService = async ({
   peripheral,
 }: {
   serialNumber: string;
-  peripheral: { status: string; vendor: string };
+  peripheral: { status: 'ONLINE' | 'OFFLINE'; vendor: string };
 }) => {
   const response = await fetch(`/api/peripherals/${serialNumber}`, {
     method: 'POST',
@@ -44,7 +44,7 @@ export const updatePeripheralService = async ({
   peripheral,
 }: {
   uid: string;
-  peripheral: { status: string; vendor: string };
+  peripheral: { status: 'ONLINE' | 'OFFLINE'; vendor: string };
 }) => {
   console.log(peripheral);
   const response = await fetch(`/api/peripherals/${uid}`, {
